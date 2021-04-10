@@ -1,0 +1,86 @@
+{
+    "Login":"دخول",
+    "SUBMIT":"موافق",
+    "CREATE NEW ACCOUNT":"انشاء حساب جديد",
+    "An SMS will be sent to verify your phone number": "سوف يتم ارسال رسالة نصية للتحقق من رقم هاتفك,الرجاء ادخال رقم هاتف",
+    "Phone Number":"رقم الهاتف",
+    "LOGIN":"دخول",
+    "Signup":"تسجيل",
+    "SIGNUP":"تسجيل",
+    "Card Services":"خدمات البطاقات",
+    "Scan & Pay":"امسح و ادفع",
+    "My QR":"استلام تحويل",
+    "Telecom Services":"خدمات الاتصالات",
+    "Electricity Services":"كهرباء الدفع المقدم",
+    "Goverment Services":"الخدمات الحكومية",
+    "Money Transfer":"تحويل اموال",
+    "Zoal Khair":"زول خير",
+    "Dal Payment":"دفعية دال",
+    "Billers":"المفوترين",
+    "Entertainment":"ترفيه",
+    "Card Number":"البطاقة",
+    "Reference":"الجهة",
+    "Amount":"المبلغ",
+    "Comment":"تعليق",
+    "IPIN":"الرقم السري",
+    "E-INVOICE INQUIRY":"استعلام عن الفاتورة الالكترونية",
+    "E-INVOICE":"الفاتورة الالكترونية",
+    "Reference Number":"رقم الفاتورة",
+    "Mobile TOPUP":"شراء رصيد موبايل",
+    "Bill Payment":"فاتورة الموبايل",
+    "Sudani ADSL":"سوداني ADSL",
+    "customsServices":"الجمارك",
+    "E15":"ايصال 15 الالكتروني",
+    "Higher Education":"التعليم العالي",
+    "E-Invoice":"الفاتورة الالكترونية",
+    "Meter Number":"رقم العداد",
+    "Bill Payment INQUIRY":"دفع فاتورة الموبايل",
+    "Opreator":"المشغل",
+    "BILL INQUIRY":"استعلام عن الفاتورة",
+    "CUSTOMS":"الجمارك",
+    "CUSTOMS INQUIRY":"استعلام عن الجمارك",
+    "Bank Code":"الرقم البنكي",
+    "Declarant":"المخلص",
+    "Invoice Number":"رقم الايصال",
+    "SUDANESE CERTIFICATE":"الشهادة السودانية",
+    "ARAB CERTIFICATE":"الشهادة العربية",
+    "Course":"نوع الشهادة",
+    "Form Type":"نوع النقديم",
+    "Seat Number":"رقم الطالب",
+    "Student Name":"اسم الطالب",
+    "QR Code":"رمز الاستجابة السريع",
+    "Transfer Card to Card":"التحويل الي البطاقة",
+    "Voucher":"ارسال حوالة",
+    "To Card":"الي بطاقة",
+    "Safir":"سافر",
+    "TUTIA":"توتيا",
+    "Mint Payment":"دفعيات مينت",
+    "Generate IPIN":"انشاء الرقم السري",
+    "Card Details":"اضافة او تعديل البطاقة",
+    "Card Balance":"رصيد البطاقة",
+    "Change IPIN":"تغير الرقم السري",
+    "Favourites":"المفضلة",
+    "Transaction History":"كشف المعاملات",
+    "Entertainment Card History":"كشف بطاقات الترفيه",
+    "About Us":"معلومات عنا",
+    "Log Out":"تسجيل الخروج",
+    "New IPIN":"الرقم السري الجديد",
+    "Confirm New IPIN":"تاكيد الرقم السري الجديد",
+    "Card Name":"اسم البطاقة",
+    "Card Expiery Date":"تاريخ انتهاء البطاقة"
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+}
