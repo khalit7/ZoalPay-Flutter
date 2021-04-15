@@ -103,10 +103,10 @@ class TransferCardToCardPage extends StatelessWidget {
                           icon: Icon(Icons.favorite_sharp, color: Colors.red),
                         ),
                         IconButton(
-                          icon: Icon(
-                            Icons.qr_code_scanner_sharp,
-                            color: Colors.red,
-                          ),
+                          // icon: Icon(
+                          //   Icons.qr_code_scanner_sharp,
+                          //   color: Colors.red,
+                          // ),
                           onPressed: () {
                             Navigator.pushNamed(
                                 context, ScanAndPayPage.pageName);

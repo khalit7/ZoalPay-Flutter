@@ -2,7 +2,7 @@ import 'package:ZoalPay/Widgets/Custom_Drawer.dart';
 import 'package:ZoalPay/models/Data_Base_Modle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+//import 'package:qr_flutter/qr_flutter.dart';
 import 'package:ZoalPay/lang/Localization.dart';
 import 'package:share/share.dart';
 
@@ -73,12 +73,14 @@ class _QRPageState extends State<QRPage> {
                   decoration: ShapeDecoration(
                       shape: Border.all(width: 1, color: Colors.white),
                       color: Colors.white),
-                  child: QrImage(
-                    data: _controller1.text,
-                    size: width * height / 1000,
-                  ))),
+              )
+                  // child: QrImage(
+                  //   data: _controller1.text,
+                  //   size: width * height / 1000,
+                  // ))),
           //share button
-          Positioned(
+              ),
+                   Positioned(
               left: width / 1.3,
               right: width / 20,
               top: height / 1.3,

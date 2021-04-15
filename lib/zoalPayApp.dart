@@ -35,6 +35,7 @@ import 'pages/AfterLoggingInPages/CardServicesPages/TelecomServicesPages/Sudani_
 import 'pages/AfterLoggingInPages/CardServicesPages/Zoal_Khair_Page.dart';
 import 'pages/AfterLoggingInPages/Card_Services_Page.dart';
 import 'pages/Home_Page.dart';
+import 'package:ZoalPay/pages/HomePagePages/validate_otp_page.dart';
 
 class MyApp extends StatefulWidget {
   static void setLocale(BuildContext context, Locale locale) {
@@ -113,7 +114,8 @@ class _MyAppState extends State<MyApp> {
               TransactionHistoryPage(),
           EntertainmentCardHistoryPage.pageName: (context) =>
               EntertainmentCardHistoryPage(),
-          AboutUsPage.pageName: (context) => AboutUsPage()
+          AboutUsPage.pageName: (context) => AboutUsPage(),
+          ValidateOtpPage.pageName: (context) => ValidateOtpPage(),
         });
   }
 }

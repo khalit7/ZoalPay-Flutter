@@ -5,5 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(Provider<ApiService>(child: MyApp()));
+  runApp(
+      Provider<ApiService>(create: (context) => ApiService(), child: MyApp()));
 }

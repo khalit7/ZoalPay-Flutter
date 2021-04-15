@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:dio/dio.dart';
 import 'package:dio_flutter_transformer/dio_flutter_transformer.dart';
 
 import 'package:ZoalPay/utils/constants.dart';
+import 'package:ZoalPay/models/api_exception_model.dart' as ApiExceptions;
 
 class NoIdTokenException implements Exception {}
 
@@ -17,17 +19,16 @@ class ApiService {
     contentType: Headers.jsonContentType,
     headers: {HttpHeaders.acceptHeader: Headers.jsonContentType},
   ));
-
   ApiService({String token, String jwt})
       : _idToken = token,
         _jwt = jwt {
     dio.transformer = FlutterTransformer();
     //dio.interceptors.add(_ErrorInterceptor());
-    dio.interceptors.add(_JwtInterceptor(
-      dio: dio,
-      jwt: _jwt,
-      fetchJwt: _updateJwt,
-    ));
+    // dio.interceptors.add(_JwtInterceptor(
+    //   dio: dio,
+    //   jwt: _jwt,
+    //   fetchJwt: _updateJwt,
+    // ));
   }
 
   void setIdToken(String idToken) {
@@ -58,6 +59,41 @@ class ApiService {
   //
   //
   Future<void> signUpWithPhoneNumber() {}
+
+  Future<void> sendSignUpOtp(String phoneNumber) async {
+    String endPoint;
+    endPoint = "/api/send-otp/signup";
+    String phoneNumberWithoutZero = phoneNumber.substring(1);
+    Response response;
+    try {
+      response = await dio.post(endPoint, data: {
+        "username": "$phoneNumberWithoutZero",
+        "login": "$phoneNumberWithoutZero",
+        "password": "$phoneNumberWithoutZero"
+      });
+      print("this is the response object " + response.toString());
+      print("testing .... " + response.data);
+    } on DioError catch (e) {
+      throw ApiExceptions.parseJson(jsonDecode(e.response.data));
+    }
+  }
+
+  Future<void> validateOtp(String phoneNumber, String otp) async {
+    String endpoint;
+    endpoint = "/api/validate-otp";
+    String phoneNumberWithoutZero = phoneNumber.substring(1);
+
+    Response response;
+    try {
+      response = await dio.post(endpoint, data: {
+        "login": "$phoneNumberWithoutZero",
+        "otp": "$otp",
+      });
+    } on DioError catch (e) {
+      throw ApiExceptions.parseJson(jsonDecode(e.response.data));
+    }
+    // do some processing. you may need to seve some stuff to local memory (e.g: id_token , cosumer_key)
+  }
 }
 
 class _JwtInterceptor extends Interceptor {
