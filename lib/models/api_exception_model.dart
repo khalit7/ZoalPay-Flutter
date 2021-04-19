@@ -16,6 +16,8 @@ class Forbidden extends BaseException {
 
 class UserExists extends BaseException {}
 
+class UserDosNotExists extends BaseException {}
+
 class WrongOtp extends BaseException {}
 
 class UserNotFound extends BaseException {}
@@ -58,6 +60,8 @@ BaseException parseJson(json) {
   switch (json["errorKey"]) {
     case "idexists":
       return UserExists();
+    case "noid":
+      return UserDosNotExists();
     case "otpnotvalid":
       return WrongOtp();
     default:

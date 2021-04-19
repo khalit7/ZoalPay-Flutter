@@ -4,6 +4,7 @@ import 'package:ZoalPay/lang/Localization.dart';
 import 'package:ZoalPay/pages/HomePagePages/validate_otp_page.dart';
 import 'package:ZoalPay/provider/api_services.dart';
 import 'package:ZoalPay/models/api_exception_model.dart' as ApiExceptions;
+import 'package:ZoalPay/utils/constants.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -68,18 +69,13 @@ class _NewAccountPageState extends State<NewAccountPage> {
                   child: CustomFlatButton2(width, height,
                       Localization.of(context).getTranslatedValue("Signup"),
                       () async {
-                    print("result of reg expression " +
-                        regExp
-                            .hasMatch(_phoneNumberController.text.trim())
-                            .toString());
                     // check if the phone number is valid
                     if (regExp.hasMatch(_phoneNumberController.text.trim())) {
                       //valid phone number
                       //send otp message and go to validate otp page.
                       try {
-                        await context
-                            .read<ApiService>()
-                            .sendSignUpOtp(_phoneNumberController.text.trim());
+                        await context.read<ApiService>().sendOtp(
+                            _phoneNumberController.text.trim(), otpType.signUp);
                         Navigator.push(
                             context,
                             MaterialPageRoute(

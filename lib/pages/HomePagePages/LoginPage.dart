@@ -1,9 +1,13 @@
 import 'package:ZoalPay/Widgets/Custom_Flat_Button.dart';
 import 'package:ZoalPay/lang/Localization.dart';
-import 'package:ZoalPay/pages/AfterLoggingInPages/Card_Services_Page.dart';
+import 'package:ZoalPay/models/api_exception_model.dart' as ApiExceptions;
+import 'package:ZoalPay/provider/api_services.dart';
+import 'package:ZoalPay/utils/constants.dart';
 import 'package:ZoalPay/pages/HomePagePages/validate_otp_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   static final pageName = "LoginPage";
@@ -17,6 +21,8 @@ class _LoginPageState extends State<LoginPage> {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
     final _phoneNumberController = TextEditingController();
+    String pattern = r'(^0[19][0-9]{8}$)';
+    RegExp regExp = RegExp(pattern);
 
     var appBar = AppBar(
         title: Text(Localization.of(context).getTranslatedValue("LOGIN")));
@@ -59,13 +65,34 @@ class _LoginPageState extends State<LoginPage> {
               Padding(
                   padding: EdgeInsets.fromLTRB(
                       width / 4.2, height / 40, width / 4.2, 0),
-                  child: CustomFlatButton1(
-                      width,
-                      height,
+                  child: CustomFlatButton1(width, height,
                       Localization.of(context).getTranslatedValue("Login"),
-                      () {},
-                      1500,
-                      18.0))
+                      () async {
+                    // check if the phone number is valid
+                    if (regExp.hasMatch(_phoneNumberController.text.trim())) {
+                      //valid phone number
+                      //send otp message and go to validate otp page.
+                      try {
+                        await context.read<ApiService>().sendOtp(
+                            _phoneNumberController.text.trim(), otpType.login);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ValidateOtpPage(
+                                  phoneNumber:
+                                      _phoneNumberController.text.trim()),
+                            ));
+                      } on ApiExceptions.UserDosNotExists catch (e) {
+                        //TODO:notify user that user dosn't exist .. try signing up
+                        print(e.toString());
+                      }
+                      // Navigator.pushNamed(context, ValidateOtpPage.pageName);
+                    } else {
+                      //invalid phone number
+                      //TODO:notify user that the phone number is invalid
+                      print("invalid phone number !!");
+                    }
+                  }, 1500, 18.0))
             ],
           )),
     );

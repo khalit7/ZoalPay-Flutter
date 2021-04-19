@@ -60,9 +60,12 @@ class ApiService {
   //
   Future<void> signUpWithPhoneNumber() {}
 
-  Future<void> sendSignUpOtp(String phoneNumber) async {
+  Future<void> sendOtp(String phoneNumber, otpType currentOtpType) async {
     String endPoint;
-    endPoint = "/api/send-otp/signup";
+    if (currentOtpType == otpType.signUp)
+      endPoint = "/api/send-otp/signup";
+    else
+      endPoint = "/api/send-otp/login";
     String phoneNumberWithoutZero = phoneNumber.substring(1);
     Response response;
     try {
@@ -72,7 +75,6 @@ class ApiService {
         "password": "$phoneNumberWithoutZero"
       });
       print("this is the response object " + response.toString());
-      print("testing .... " + response.data);
     } on DioError catch (e) {
       throw ApiExceptions.parseJson(jsonDecode(e.response.data));
     }
