@@ -1,5 +1,5 @@
 import 'package:ZoalPay/Widgets/Custom_Drawer.dart';
-import 'package:ZoalPay/models/Data_Base_Modle.dart';
+import 'package:ZoalPay/models/card_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 //import 'package:qr_flutter/qr_flutter.dart';
@@ -15,6 +15,7 @@ class QRPage extends StatefulWidget {
 
 class _QRPageState extends State<QRPage> {
   var _controller1 = TextEditingController();
+  List<CardModel> cards;
 
   build(context) {
     var width = MediaQuery.of(context).size.width;
@@ -48,13 +49,12 @@ class _QRPageState extends State<QRPage> {
                   ),
                   subtitle: Text(_controller1.text),
                   trailing: PopupMenuButton(
-                      itemBuilder: (BuildContext context) =>
-                          DataBaseModle.definedCards
-                              .map((card) => PopupMenuItem(
-                                    child: Text(card.cardUserName),
-                                    value: card.cardUserName,
-                                  ))
-                              .toList(),
+                      itemBuilder: (BuildContext context) => cards
+                          .map((card) => PopupMenuItem(
+                                child: Text(card.cardUserName),
+                                value: card.cardUserName,
+                              ))
+                          .toList(),
                       onSelected: (value) {
                         setState(() {
                           _controller1.text = value;
@@ -70,17 +70,17 @@ class _QRPageState extends State<QRPage> {
               top: height / 7,
               bottom: height / 2.9,
               child: Container(
-                  decoration: ShapeDecoration(
-                      shape: Border.all(width: 1, color: Colors.white),
-                      color: Colors.white),
+                decoration: ShapeDecoration(
+                    shape: Border.all(width: 1, color: Colors.white),
+                    color: Colors.white),
               )
-                  // child: QrImage(
-                  //   data: _controller1.text,
-                  //   size: width * height / 1000,
-                  // ))),
-          //share button
+              // child: QrImage(
+              //   data: _controller1.text,
+              //   size: width * height / 1000,
+              // ))),
+              //share button
               ),
-                   Positioned(
+          Positioned(
               left: width / 1.3,
               right: width / 20,
               top: height / 1.3,

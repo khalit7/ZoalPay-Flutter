@@ -1,7 +1,10 @@
 import 'package:ZoalPay/Widgets/Submit_Button.dart';
 import 'package:ZoalPay/lang/Localization.dart';
-import 'package:ZoalPay/models/Data_Base_Modle.dart';
-import 'package:ZoalPay/models/card_details_model.dart';
+import 'package:ZoalPay/models/card_model.dart';
+import 'package:ZoalPay/provider/api_services.dart';
+import 'package:dio/dio.dart';
+
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
 class CardDetailsPage extends StatefulWidget {
@@ -12,13 +15,15 @@ class CardDetailsPage extends StatefulWidget {
 }
 
 class _CardDetailsPageState extends State<CardDetailsPage> {
-  var _controller1 = TextEditingController();
-  var _controller2 = TextEditingController();
-  var _controller3 = TextEditingController();
+  var _cardNameController = TextEditingController();
+  var _panController = TextEditingController();
+  var _expiryDateController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
   build(context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(
         title:
@@ -28,7 +33,7 @@ class _CardDetailsPageState extends State<CardDetailsPage> {
         //availble cards
         children: [
           ListView(
-            children: DataBaseModle.definedCards
+            children: CardModel.allCards
                 .map((card) => ListTile(
                       title: Text(card.cardUserName),
                       subtitle: Text(card.cardNumber),
@@ -56,12 +61,15 @@ class _CardDetailsPageState extends State<CardDetailsPage> {
                                 showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
-                                      var _controller1 = TextEditingController(
-                                          text: card.cardUserName);
-                                      var _controller2 = TextEditingController(
-                                          text: card.cardNumber);
-                                      var _controller3 = TextEditingController(
-                                          text: card.expiryDate);
+                                      var _editCardUserNameController =
+                                          TextEditingController(
+                                              text: card.cardUserName);
+                                      var _editCardNumberController =
+                                          TextEditingController(
+                                              text: card.cardNumber);
+                                      var _editExpiryDateController =
+                                          TextEditingController(
+                                              text: card.expiryDate);
                                       return AlertDialog(
                                           content: Stack(
                                               overflow: Overflow.visible,
@@ -87,7 +95,8 @@ class _CardDetailsPageState extends State<CardDetailsPage> {
                                                 children: [
                                                   //first form field
                                                   TextFormField(
-                                                    controller: _controller1,
+                                                    controller:
+                                                        _editCardUserNameController,
                                                     decoration: InputDecoration(
                                                         labelText: Localization
                                                                 .of(context)
@@ -106,7 +115,8 @@ class _CardDetailsPageState extends State<CardDetailsPage> {
                                                   ),
                                                   //second form field
                                                   TextFormField(
-                                                    controller: _controller2,
+                                                    controller:
+                                                        _editCardNumberController,
                                                     decoration: InputDecoration(
                                                         labelText: Localization
                                                                 .of(context)
@@ -125,19 +135,20 @@ class _CardDetailsPageState extends State<CardDetailsPage> {
                                                   ),
                                                   //third form field
                                                   TextFormField(
-                                                    controller: _controller3,
+                                                    controller:
+                                                        _editExpiryDateController,
                                                     decoration: InputDecoration(
                                                         labelText: Localization
                                                                 .of(context)
                                                             .getTranslatedValue(
-                                                                "Card Expiery Date"),
+                                                                "Card Expiry Date"),
                                                         labelStyle: TextStyle(
                                                             fontWeight:
                                                                 FontWeight
                                                                     .w300)),
                                                     validator: (value) {
                                                       if (value == "") {
-                                                        return "Enter Card Expiery Date";
+                                                        return "Enter Card Expiry Date";
                                                       }
                                                       return null;
                                                     },
@@ -145,21 +156,54 @@ class _CardDetailsPageState extends State<CardDetailsPage> {
                                                   SizedBox(
                                                     height: height / 40,
                                                   ),
-                                                  SubmitButton(() {
+                                                  SubmitButton(() async {
                                                     //TODO:validate first
-                                                    setState(() {
-                                                      card.cardUserName =
-                                                          _controller1.text;
-                                                      card.cardNumber =
-                                                          _controller2.text;
-                                                      card.expiryDate =
-                                                          _controller3.text;
+                                                    CardModel editedCard = CardModel(
+                                                        cardUserName:
+                                                            _editCardUserNameController
+                                                                .text
+                                                                .trim(),
+                                                        cardNumber:
+                                                            _editCardNumberController
+                                                                .text
+                                                                .trim(),
+                                                        expiryDate:
+                                                            _editExpiryDateController
+                                                                .text
+                                                                .trim(),
+                                                        id: card.id);
 
-                                                      Navigator.pop(context);
-                                                      _controller1.text = "";
-                                                      _controller2.text = "";
-                                                      _controller3.text = "";
-                                                    });
+                                                    try {
+                                                      card = await context
+                                                          .read<ApiService>()
+                                                          .updateCard(
+                                                              editedCard);
+
+                                                      setState(() {
+                                                        card.cardUserName =
+                                                            _editCardUserNameController
+                                                                .text;
+                                                        card.cardNumber =
+                                                            _editCardNumberController
+                                                                .text;
+                                                        card.expiryDate =
+                                                            _editExpiryDateController
+                                                                .text;
+
+                                                        Navigator.pop(context);
+                                                        _editCardUserNameController
+                                                            .text = "";
+                                                        _editCardNumberController
+                                                            .text = "";
+                                                        _editExpiryDateController
+                                                            .text = "";
+                                                      });
+                                                    } catch (e) {
+                                                      //TODO: notify user somthing went wrong
+
+                                                    }
+
+                                                    //
                                                   })
                                                 ],
                                               ),
@@ -215,7 +259,7 @@ class _CardDetailsPageState extends State<CardDetailsPage> {
                                   children: [
                                     //first form field
                                     TextFormField(
-                                      controller: _controller1,
+                                      controller: _cardNameController,
                                       decoration: InputDecoration(
                                           labelText: Localization.of(context)
                                               .getTranslatedValue("Card Name"),
@@ -230,7 +274,7 @@ class _CardDetailsPageState extends State<CardDetailsPage> {
                                     ),
                                     //second form field
                                     TextFormField(
-                                      controller: _controller2,
+                                      controller: _panController,
                                       decoration: InputDecoration(
                                           labelText: Localization.of(context)
                                               .getTranslatedValue(
@@ -246,16 +290,16 @@ class _CardDetailsPageState extends State<CardDetailsPage> {
                                     ),
                                     //third form field
                                     TextFormField(
-                                      controller: _controller3,
+                                      controller: _expiryDateController,
                                       decoration: InputDecoration(
                                           labelText: Localization.of(context)
                                               .getTranslatedValue(
-                                                  "Card Expiery Date"),
+                                                  "Card Expiry Date"),
                                           labelStyle: TextStyle(
                                               fontWeight: FontWeight.w300)),
                                       validator: (value) {
                                         if (value == "") {
-                                          return "Enter Card Expiery Date";
+                                          return "Enter Card Expiry Date";
                                         }
                                         return null;
                                       },
@@ -263,19 +307,31 @@ class _CardDetailsPageState extends State<CardDetailsPage> {
                                     SizedBox(
                                       height: height / 40,
                                     ),
-                                    SubmitButton(() {
+                                    // submit button
+                                    SubmitButton(() async {
                                       //TODO:validate first
-                                      setState(() {
-                                        DataBaseModle.definedCards.add(
-                                            CardDetailsModel(
-                                                cardUserName: _controller1.text,
-                                                cardNumber: _controller2.text,
-                                                expiryDate: _controller3.text));
-                                        Navigator.pop(context);
-                                        _controller1.text = "";
-                                        _controller2.text = "";
-                                        _controller3.text = "";
-                                      });
+                                      //
+                                      try {
+                                        CardModel newCard = await context
+                                            .read<ApiService>()
+                                            .addCard(
+                                                _cardNameController.text.trim(),
+                                                _expiryDateController.text
+                                                    .trim(),
+                                                _panController.text.trim());
+                                        //add to cards list
+                                        setState(() {
+                                          CardModel.allCards.add(newCard);
+                                          Navigator.pop(context);
+                                          _cardNameController.text = "";
+                                          _panController.text = "";
+                                          _expiryDateController.text = "";
+                                        });
+                                      } catch (e) {
+                                        //TODO:show user that somthing went wrong
+                                        print(e.response.data);
+                                        print("tdaa");
+                                      }
                                     })
                                   ],
                                 ),

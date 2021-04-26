@@ -34,6 +34,7 @@ import 'pages/AfterLoggingInPages/CardServicesPages/TelecomServicesPages/Mobile_
 import 'pages/AfterLoggingInPages/CardServicesPages/TelecomServicesPages/Sudani_ADSL_Page.dart';
 import 'pages/AfterLoggingInPages/CardServicesPages/Zoal_Khair_Page.dart';
 import 'pages/AfterLoggingInPages/Card_Services_Page.dart';
+import 'package:ZoalPay/pages/AfterLoggingInPages/ReceiptPages/Balance_Receipt_Page.dart';
 import 'pages/Home_Page.dart';
 import 'package:ZoalPay/pages/HomePagePages/validate_otp_page.dart';
 
@@ -116,6 +117,7 @@ class _MyAppState extends State<MyApp> {
               EntertainmentCardHistoryPage(),
           AboutUsPage.pageName: (context) => AboutUsPage(),
           ValidateOtpPage.pageName: (context) => ValidateOtpPage(),
+          BalanceReceipt.pageName: (context) => BalanceReceipt(),
         });
   }
 }

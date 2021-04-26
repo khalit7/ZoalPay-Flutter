@@ -22,6 +22,10 @@ class WrongOtp extends BaseException {}
 
 class UserNotFound extends BaseException {}
 
+class ConsumerTransactionFailed extends BaseException {}
+
+class NoResponseFromEbs extends BaseException {}
+
 class FavouriteLocationNotFound extends BaseException {}
 
 class RideNotFound extends BaseException {}
@@ -46,7 +50,7 @@ class Unknown extends BaseException {
 BaseException parseResponse(Response response) {
   final data = response.data;
   if (data is Map<String, dynamic>) {
-    return parseJson(data);
+    return parseAPIResponseJson(data);
   }
   switch (response.statusCode) {
     case 503:
@@ -56,7 +60,7 @@ BaseException parseResponse(Response response) {
   }
 }
 
-BaseException parseJson(json) {
+BaseException parseAPIResponseJson(json) {
   switch (json["errorKey"]) {
     case "idexists":
       return UserExists();
@@ -70,6 +74,17 @@ BaseException parseJson(json) {
         statusCode: json["status"],
         errorKey: json["errorKey"],
         title: json["title"],
+      );
+  }
+}
+
+BaseException parseEBSResponseJson(Map<String, dynamic> json) {
+  switch (json["responseMessage"]) {
+    case "":
+      return BaseException();
+    default:
+      return Unknown(
+        message: "unknown error from EBS",
       );
   }
 }
