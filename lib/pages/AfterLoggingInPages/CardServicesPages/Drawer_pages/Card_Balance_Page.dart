@@ -1,10 +1,12 @@
+import 'package:ZoalPay/Widgets/Loading_widget.dart';
 import 'package:ZoalPay/Widgets/Submit_Button.dart';
 import 'package:ZoalPay/lang/Localization.dart';
-import 'package:ZoalPay/pages/AfterLoggingInPages/ReceiptPages/Balance_Receipt_Page.dart';
+import 'package:ZoalPay/pages/AfterLoggingInPages/ReceiptPages/Transaction_details.dart';
 import 'package:ZoalPay/provider/api_services.dart';
 import 'package:flutter/material.dart';
 import 'package:ZoalPay/models/card_model.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:ZoalPay/models/api_exception_model.dart' as ApiExceptions;
 
 class CardBalancePage extends StatelessWidget {
@@ -117,6 +119,7 @@ class CardBalancePage extends StatelessWidget {
           SizedBox(
             height: height / 40,
           ),
+          //submit button
           SubmitButton(() async {
             if (selectedCard == null) {
               // TODO:notify user to select a card
@@ -127,16 +130,18 @@ class CardBalancePage extends StatelessWidget {
             } else {
               // card number selected + valid Ipin .. attempt the transaction
               try {
-                print("submit attempt");
-                double balance = await context
+                showLoadingDialog(context);
+                //TODO:pass the card number
+                List balanceAndPan = await context
                     .read<ApiService>()
                     .getBalance(selectedCard, _IPINController.text.trim());
+              Navigator.pop(context);
                 print("going to the balance page");
                 // navigate to the recipt page.
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => BalanceReceipt(balance: balance),
+                      builder: (context) => TransactionDetails(balance: balanceAndPan[0],cardNumber:balanceAndPan[1]),
                     ));
               } catch (e) {
                 // remmber to handle the case where a wrong IPIN is entered

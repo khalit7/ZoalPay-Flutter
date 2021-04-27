@@ -35,206 +35,191 @@ class CardServicesPage extends StatelessWidget {
           body: Stack(
             children: [
               Container(color: Colors.grey[200]),
-              FutureBuilder<List<CardModel>>(
-                  future: context.read<ApiService>().getAllCards(),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData)
-                      return CircularProgressIndicator();
-                    else {
-                      CardModel.allCards = snapshot.data;
-                      return ListView(
-                        children: [
-                          //first row
-                          Row(
-                            children: [
-                              CardWithImageAndText(
-                                  IconButton(
-                                      onPressed: () {
-                                        Navigator.pushNamed(
-                                            context, ScanAndPayPage.pageName);
-                                      },
-                                      icon: Icon(Icons.scanner,
-                                          color: Colors.red),
-                                      iconSize: width / 3),
-                                  Text(
-                                      Localization.of(context)
-                                          .getTranslatedValue("Scan & Pay"),
-                                      style: TextStyle(color: Colors.red),
-                                      textScaleFactor: 1.2)),
-                              SizedBox(
-                                width: width - (2 * width / 2.01),
-                              ),
-                              CardWithImageAndText(
-                                  IconButton(
-                                    onPressed: () {
-                                      Navigator.pushNamed(
-                                          context, QRPage.pageName);
-                                    },
-                                    icon: Icon(Icons.crop_free_rounded,
-                                        color: Colors.red),
-                                    iconSize: width / 3,
-                                  ),
-                                  Text(
-                                    Localization.of(context)
-                                        .getTranslatedValue("My QR"),
-                                    style: TextStyle(color: Colors.red),
-                                    textScaleFactor: 1.2,
-                                  )),
-                            ],
+              ListView(
+                children: [
+                  //first row
+                  Row(
+                    children: [
+                      CardWithImageAndText(
+                          IconButton(
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                    context, ScanAndPayPage.pageName);
+                              },
+                              icon: Icon(Icons.scanner, color: Colors.red),
+                              iconSize: width / 3),
+                          Text(
+                              Localization.of(context)
+                                  .getTranslatedValue("Scan & Pay"),
+                              style: TextStyle(color: Colors.red),
+                              textScaleFactor: 1.2)),
+                      SizedBox(
+                        width: width - (2 * width / 2.01),
+                      ),
+                      CardWithImageAndText(
+                          IconButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, QRPage.pageName);
+                            },
+                            icon: Icon(Icons.crop_free_rounded,
+                                color: Colors.red),
+                            iconSize: width / 3,
                           ),
+                          Text(
+                            Localization.of(context)
+                                .getTranslatedValue("My QR"),
+                            style: TextStyle(color: Colors.red),
+                            textScaleFactor: 1.2,
+                          )),
+                    ],
+                  ),
 
-                          //second row
-                          Row(
-                            children: [
-                              CardWithImageAndText(
-                                  IconButton(
-                                      onPressed: () {
-                                        Navigator.pushNamed(context,
-                                            TelecomSevicesPage.pageName);
-                                      },
-                                      icon:
-                                          Icon(Icons.phone, color: Colors.red),
-                                      iconSize: width / 3),
-                                  Text(
-                                      Localization.of(context)
-                                          .getTranslatedValue(
-                                              "Telecom Services"),
-                                      style: TextStyle(color: Colors.red),
-                                      textScaleFactor: 1.2)),
-                              SizedBox(
-                                width: width - (2 * width / 2.01),
-                              ),
-                              CardWithImageAndText(
-                                  IconButton(
-                                      onPressed: () {
-                                        Navigator.pushNamed(context,
-                                            ElectricityServicesPage.pageName);
-                                      },
-                                      icon: Icon(Icons.bolt, color: Colors.red),
-                                      iconSize: width / 3),
-                                  Text(
-                                      Localization.of(context)
-                                          .getTranslatedValue(
-                                              "Electricity Services"),
-                                      style: TextStyle(color: Colors.red),
-                                      textScaleFactor: 1.2)),
-                            ],
-                          ),
+                  //second row
+                  Row(
+                    children: [
+                      CardWithImageAndText(
+                          IconButton(
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                    context, TelecomSevicesPage.pageName);
+                              },
+                              icon: Icon(Icons.phone, color: Colors.red),
+                              iconSize: width / 3),
+                          Text(
+                              Localization.of(context)
+                                  .getTranslatedValue("Telecom Services"),
+                              style: TextStyle(color: Colors.red),
+                              textScaleFactor: 1.2)),
+                      SizedBox(
+                        width: width - (2 * width / 2.01),
+                      ),
+                      CardWithImageAndText(
+                          IconButton(
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                    context, ElectricityServicesPage.pageName);
+                              },
+                              icon: Icon(Icons.bolt, color: Colors.red),
+                              iconSize: width / 3),
+                          Text(
+                              Localization.of(context)
+                                  .getTranslatedValue("Electricity Services"),
+                              style: TextStyle(color: Colors.red),
+                              textScaleFactor: 1.2)),
+                    ],
+                  ),
 
-                          //third row
-                          Row(
-                            children: [
-                              CardWithImageAndText(
-                                  IconButton(
-                                      onPressed: () {
-                                        Navigator.pushNamed(context,
-                                            GovermentServices.pageName);
-                                      },
-                                      icon: Icon(Icons.work, color: Colors.red),
-                                      iconSize: width / 3),
-                                  Text(
-                                      Localization.of(context)
-                                          .getTranslatedValue(
-                                              "Goverment Services"),
-                                      style: TextStyle(color: Colors.red),
-                                      textScaleFactor: 1.2)),
-                              SizedBox(
-                                width: width - (2 * width / 2.01),
-                              ),
-                              CardWithImageAndText(
-                                  IconButton(
-                                      onPressed: () {
-                                        Navigator.pushNamed(context,
-                                            MoneyTransferPage.pageName);
-                                      },
-                                      icon: Icon(Icons.attach_money_sharp,
-                                          color: Colors.red),
-                                      iconSize: width / 3),
-                                  Text(
-                                      Localization.of(context)
-                                          .getTranslatedValue("Money Transfer"),
-                                      style: TextStyle(color: Colors.red),
-                                      textScaleFactor: 1.2)),
-                            ],
-                          ),
+                  //third row
+                  Row(
+                    children: [
+                      CardWithImageAndText(
+                          IconButton(
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                    context, GovermentServices.pageName);
+                              },
+                              icon: Icon(Icons.work, color: Colors.red),
+                              iconSize: width / 3),
+                          Text(
+                              Localization.of(context)
+                                  .getTranslatedValue("Goverment Services"),
+                              style: TextStyle(color: Colors.red),
+                              textScaleFactor: 1.2)),
+                      SizedBox(
+                        width: width - (2 * width / 2.01),
+                      ),
+                      CardWithImageAndText(
+                          IconButton(
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                    context, MoneyTransferPage.pageName);
+                              },
+                              icon: Icon(Icons.attach_money_sharp,
+                                  color: Colors.red),
+                              iconSize: width / 3),
+                          Text(
+                              Localization.of(context)
+                                  .getTranslatedValue("Money Transfer"),
+                              style: TextStyle(color: Colors.red),
+                              textScaleFactor: 1.2)),
+                    ],
+                  ),
 
-                          //fourth row
-                          Row(
-                            children: [
-                              CardWithImageAndText(
-                                  IconButton(
-                                      onPressed: () {
-                                        Navigator.pushNamed(
-                                            context, ZoalKhairPage.pageName);
-                                      },
-                                      icon: Icon(Icons.volunteer_activism,
-                                          color: Colors.red),
-                                      iconSize: width / 3),
-                                  Text(
-                                      Localization.of(context)
-                                          .getTranslatedValue("Zoal Khair"),
-                                      style: TextStyle(color: Colors.red),
-                                      textScaleFactor: 1.2)),
-                              SizedBox(
-                                width: width - (2 * width / 2.01),
-                              ),
-                              CardWithImageAndText(
-                                  IconButton(
-                                      onPressed: () {
-                                        Navigator.pushNamed(
-                                            context, DalPaymentPage.pageName);
-                                      },
-                                      icon: Icon(Icons.payment_outlined,
-                                          color: Colors.red),
-                                      iconSize: width / 3),
-                                  Text(
-                                      Localization.of(context)
-                                          .getTranslatedValue("Dal Payment"),
-                                      style: TextStyle(color: Colors.red),
-                                      textScaleFactor: 1.2)),
-                            ],
-                          ),
+                  //fourth row
+                  Row(
+                    children: [
+                      CardWithImageAndText(
+                          IconButton(
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                    context, ZoalKhairPage.pageName);
+                              },
+                              icon: Icon(Icons.volunteer_activism,
+                                  color: Colors.red),
+                              iconSize: width / 3),
+                          Text(
+                              Localization.of(context)
+                                  .getTranslatedValue("Zoal Khair"),
+                              style: TextStyle(color: Colors.red),
+                              textScaleFactor: 1.2)),
+                      SizedBox(
+                        width: width - (2 * width / 2.01),
+                      ),
+                      CardWithImageAndText(
+                          IconButton(
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                    context, DalPaymentPage.pageName);
+                              },
+                              icon: Icon(Icons.payment_outlined,
+                                  color: Colors.red),
+                              iconSize: width / 3),
+                          Text(
+                              Localization.of(context)
+                                  .getTranslatedValue("Dal Payment"),
+                              style: TextStyle(color: Colors.red),
+                              textScaleFactor: 1.2)),
+                    ],
+                  ),
 
-                          //fifth row
-                          Row(
-                            children: [
-                              CardWithImageAndText(
-                                  IconButton(
-                                      onPressed: () {
-                                        Navigator.pushNamed(
-                                            context, BillerSPage.pageName);
-                                      },
-                                      icon: Icon(Icons.storefront_rounded,
-                                          color: Colors.red),
-                                      iconSize: width / 3),
-                                  Text(
-                                      Localization.of(context)
-                                          .getTranslatedValue("Billers"),
-                                      style: TextStyle(color: Colors.red),
-                                      textScaleFactor: 1.2)),
-                              SizedBox(
-                                width: width - (2 * width / 2.01),
-                              ),
-                              CardWithImageAndText(
-                                  IconButton(
-                                      onPressed: () {
-                                        Navigator.pushNamed(context,
-                                            EntertainmentPage.pageName);
-                                      },
-                                      icon: Icon(Icons.tag_faces_sharp,
-                                          color: Colors.red),
-                                      iconSize: width / 3),
-                                  Text(
-                                      Localization.of(context)
-                                          .getTranslatedValue("Entertainment"),
-                                      style: TextStyle(color: Colors.red),
-                                      textScaleFactor: 1.2)),
-                            ],
-                          ),
-                        ],
-                      );
-                    }
-                  })
+                  //fifth row
+                  Row(
+                    children: [
+                      CardWithImageAndText(
+                          IconButton(
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                    context, BillerSPage.pageName);
+                              },
+                              icon: Icon(Icons.storefront_rounded,
+                                  color: Colors.red),
+                              iconSize: width / 3),
+                          Text(
+                              Localization.of(context)
+                                  .getTranslatedValue("Billers"),
+                              style: TextStyle(color: Colors.red),
+                              textScaleFactor: 1.2)),
+                      SizedBox(
+                        width: width - (2 * width / 2.01),
+                      ),
+                      CardWithImageAndText(
+                          IconButton(
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                    context, EntertainmentPage.pageName);
+                              },
+                              icon: Icon(Icons.tag_faces_sharp,
+                                  color: Colors.red),
+                              iconSize: width / 3),
+                          Text(
+                              Localization.of(context)
+                                  .getTranslatedValue("Entertainment"),
+                              style: TextStyle(color: Colors.red),
+                              textScaleFactor: 1.2)),
+                    ],
+                  ),
+                ],
+              )
             ],
           )),
     );

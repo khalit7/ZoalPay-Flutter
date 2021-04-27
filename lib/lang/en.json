@@ -67,8 +67,11 @@
     "New IPIN": "New IPIN",
     "Confirm New IPIN": "Confirm New IPIN",
     "Card Name": "Card Name",
-    "Card Expiry Date": "Card Expiry Date"
-
+    "Card Expiry Date": "Card Expiry Date",
+    "Transaction Details":"Transaction Details",
+    "Successful Transaction":"Successful Transaction",
+    "Balance":"Balance",
+    "Date":"Date"
 
 
 

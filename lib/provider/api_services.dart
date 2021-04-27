@@ -174,7 +174,7 @@ class ApiService {
     };
   }
 
-  Future<double> getBalance(CardModel card, String Ipin) async {
+  Future<List> getBalance(CardModel card, String Ipin) async {
     String endpoint = "/api/consumer/getBalance";
 
     String transactionUUID = uuid.v1();
@@ -195,7 +195,7 @@ class ApiService {
     print(response?.data["responseStatus"]);
     if (response?.data["responseStatus"] == "Failed")
       throw ApiExceptions.parseEBSResponseJson(response.data);
-    return response.data["balance"]["available"];
+    return [response.data["balance"]["available"] , response.data["PAN"] ];
   }
 
   //
