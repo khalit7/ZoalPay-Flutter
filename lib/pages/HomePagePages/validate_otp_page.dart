@@ -1,6 +1,7 @@
 import 'package:ZoalPay/Widgets/Loading_widget.dart';
 import 'package:ZoalPay/Widgets/Submit_Button.dart';
 import 'package:ZoalPay/models/card_model.dart';
+import 'package:ZoalPay/models/payee_model.dart';
 import 'package:ZoalPay/provider/api_services.dart';
 //import 'package:ZoalPay/lang/Localization.dart';
 //
@@ -98,22 +99,29 @@ class _ValidateOtpPageState extends State<ValidateOtpPage> with CodeAutoFill {
                       try {
                         showLoadingDialog(context);
 
-                        await Provider.of<ApiService>(context, listen: false)
-                            .validateOtp(
-                                widget.phoneNumber, _otpController.text);
+                        // await Provider.of<ApiService>(context, listen: false)
+                        //     .validateOtp(
+                        //         widget.phoneNumber, _otpController.text);
                         // if isverfied load all cards first ... then ... redirect to card services page
                         CardModel.allCards = await Provider.of<ApiService>(
                                 context,
                                 listen: false)
                             .getAllCards();
 
+                        // fetch payee list
+                        PayeeModel.allPayees =
+                            await context.read<ApiService>().getPayeeList();
+
                         Navigator.pop(context);
+
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => CardServicesPage(),
                             ));
                       } on ApiExceptions.WrongOtp catch (e) {
+                        // stop loading screen
+                        Navigator.pop(context);
                         //TODO:Notify user that the otp code entered is wrong
                         print(e.toString());
                       }

@@ -35,7 +35,7 @@
     "E-Invoice": "E-Invoice",
     "Meter Number": "Meter Number",
     "Bill Payment INQUIRY": "Bill Payment INQUIRY",
-    "Opreator": "Opreator",
+    "operator": "operator",
     "BILL INQUIRY": "BILL INQUIRY",
     "CUSTOMS": "CUSTOMS",
     "CUSTOMS INQUIRY": "CUSTOMS INQUIRY",
@@ -68,10 +68,10 @@
     "Confirm New IPIN": "Confirm New IPIN",
     "Card Name": "Card Name",
     "Card Expiry Date": "Card Expiry Date",
-    "Transaction Details":"Transaction Details",
-    "Successful Transaction":"Successful Transaction",
-    "Balance":"Balance",
-    "Date":"Date"
+    "Transaction Details": "Transaction Details",
+    "Successful Transaction": "Successful Transaction",
+    "Balance": "Balance",
+    "Date": "Date"
 
 
 

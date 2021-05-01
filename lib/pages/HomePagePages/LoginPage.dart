@@ -4,6 +4,7 @@ import 'package:ZoalPay/models/api_exception_model.dart' as ApiExceptions;
 import 'package:ZoalPay/provider/api_services.dart';
 import 'package:ZoalPay/utils/constants.dart';
 import 'package:ZoalPay/pages/HomePagePages/validate_otp_page.dart';
+import 'package:ZoalPay/utils/validators.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -21,8 +22,6 @@ class _LoginPageState extends State<LoginPage> {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
     final _phoneNumberController = TextEditingController();
-    String pattern = r'(^0[19][0-9]{8}$)';
-    RegExp regExp = RegExp(pattern);
 
     var appBar = AppBar(
         title: Text(Localization.of(context).getTranslatedValue("LOGIN")));
@@ -69,12 +68,13 @@ class _LoginPageState extends State<LoginPage> {
                       Localization.of(context).getTranslatedValue("Login"),
                       () async {
                     // check if the phone number is valid
-                    if (regExp.hasMatch(_phoneNumberController.text.trim())) {
+                    if (isPhoneNumbervalid(
+                        _phoneNumberController.text.trim())) {
                       //valid phone number
                       //send otp message and go to validate otp page.
                       try {
-                        await context.read<ApiService>().sendOtp(
-                            _phoneNumberController.text.trim(), otpType.login);
+                        // await context.read<ApiService>().sendOtp(
+                        //     _phoneNumberController.text.trim(), otpType.login);
                         Navigator.push(
                             context,
                             MaterialPageRoute(

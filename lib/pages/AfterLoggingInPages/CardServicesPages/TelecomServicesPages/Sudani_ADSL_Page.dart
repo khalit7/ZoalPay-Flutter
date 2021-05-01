@@ -1,17 +1,24 @@
 import 'package:ZoalPay/Widgets/Custom_Drawer.dart';
 import 'package:ZoalPay/Widgets/Submit_Button.dart';
 import 'package:ZoalPay/lang/Localization.dart';
+import 'package:ZoalPay/models/card_model.dart';
+import 'package:ZoalPay/models/payee_model.dart';
+import 'package:ZoalPay/provider/api_services.dart';
+import 'package:provider/provider.dart';
+import 'package:ZoalPay/utils/validators.dart';
 import 'package:flutter/material.dart';
 
 class SudaniAdSlPage extends StatelessWidget {
   static final pageName = "SudaniAdSlPage";
-  var _controllerTab2Field1 = TextEditingController();
-  var _controllerTab2Field2 = TextEditingController();
-  var _controllerTab2Field3 = TextEditingController();
-  var _controllerTab2Field4 = TextEditingController();
-  var _controllerTab1Field1 = TextEditingController();
-  var _controllerTab1Field2 = TextEditingController();
-  var _controllerTab1Field3 = TextEditingController();
+  CardModel selectedCardTab1;
+  CardModel selectedCardTab2;
+  var _cardNameControllerTab2 = TextEditingController();
+  var _phoneNumberControllerTab2 = TextEditingController();
+  var _amountController = TextEditingController();
+  var _ipinControllerTab1 = TextEditingController();
+  var _cardNameControllerTab1 = TextEditingController();
+  var _phoneNumberControllerTab1 = TextEditingController();
+  var _ipinControllerTab2 = TextEditingController();
 //TODO:second tab
   build(context) {
     var width = MediaQuery.of(context).size.width;
@@ -64,26 +71,31 @@ class SudaniAdSlPage extends StatelessWidget {
                             SizedBox(
                               width: width - (width / 15),
                               child: TextField(
-                                controller: _controllerTab1Field1,
+                                controller: _cardNameControllerTab1,
+                                onChanged: (value) {
+                                  _cardNameControllerTab1.text =
+                                      selectedCardTab1.cardUserName ?? "";
+                                },
                                 style: TextStyle(
                                   fontWeight: FontWeight.w300,
                                 ),
                                 decoration: InputDecoration(
                                     labelText: Localization.of(context)
                                         .getTranslatedValue("Card Number"),
-                                    suffixIcon: PopupMenuButton(
-                                        itemBuilder: (BuildContext context) => [
-                                              PopupMenuItem(
-                                                child: Text("choice 1"),
-                                                value: "choice 1",
-                                              ),
-                                              PopupMenuItem(
-                                                child: Text("choice 2"),
-                                                value: "choice 2",
-                                              )
-                                            ],
+                                    suffixIcon: PopupMenuButton<CardModel>(
+                                        itemBuilder: (BuildContext context) =>
+                                            CardModel.allCards
+                                                .map((card) => PopupMenuItem(
+                                                      child: Text(
+                                                          card.cardUserName),
+                                                      value: card,
+                                                    ))
+                                                .toList(),
                                         onSelected: (value) {
-                                          _controllerTab1Field1.text = value;
+                                          selectedCardTab1 = value;
+                                          _cardNameControllerTab1.text =
+                                              selectedCardTab1.cardUserName;
+                                          print("${value.cardNumber}");
                                         },
                                         icon: Icon(Icons.arrow_drop_down))),
                               ),
@@ -102,31 +114,16 @@ class SudaniAdSlPage extends StatelessWidget {
                             SizedBox(
                               width: width - (width / 15),
                               child: TextField(
-                                controller: _controllerTab1Field2,
+                                controller: _phoneNumberControllerTab1,
                                 onChanged: (string) {},
                                 onSubmitted: (string) {},
                                 style: TextStyle(
                                   fontWeight: FontWeight.w300,
                                 ),
                                 decoration: InputDecoration(
-                                    labelText: Localization.of(context)
-                                        .getTranslatedValue("Phone Number"),
-                                    suffixIcon: PopupMenuButton(
-                                        itemBuilder: (BuildContext context) => [
-                                              PopupMenuItem(
-                                                child: Text("choice 1"),
-                                                value: "choice 1",
-                                              ),
-                                              PopupMenuItem(
-                                                child: Text("choice 2"),
-                                                value: "choice 2",
-                                              )
-                                            ],
-                                        onSelected: (value) {
-                                          _controllerTab1Field2.text = value;
-                                        },
-                                        icon: Icon(Icons.favorite_sharp,
-                                            color: Colors.red))),
+                                  labelText: Localization.of(context)
+                                      .getTranslatedValue("Phone Number"),
+                                ),
                               ),
                             ),
                           ],
@@ -143,9 +140,7 @@ class SudaniAdSlPage extends StatelessWidget {
                             SizedBox(
                               width: width - (width / 15),
                               child: TextField(
-                                controller: _controllerTab1Field3,
-                                onChanged: (string) {},
-                                onSubmitted: (string) {},
+                                controller: _ipinControllerTab1,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w300,
                                 ),
@@ -160,7 +155,31 @@ class SudaniAdSlPage extends StatelessWidget {
                         SizedBox(
                           height: height / 40,
                         ),
-                        SubmitButton(() {})
+                        SubmitButton(() async {
+                          if (selectedCardTab1 == null) {
+                            // TODO:notify user to select a card
+                            print("please select a card");
+                          } else if (!isPhoneNumbervalid(
+                              _phoneNumberControllerTab1.text.trim())) {
+                            //TODO: notify user to enter valid phone number
+                            print("Please enter a valid phone number ");
+                          } else if (!isIpinValid(
+                              _ipinControllerTab1.text.trim())) {
+                            //TODO: notify user to enter a valid IPIN
+                            print("please enter a valid IPIN");
+                          } else {
+                            // attempt bill inquiry
+                            try {
+                              await context.read<ApiService>().getBill(
+                                  selectedCardTab1,
+                                  _phoneNumberControllerTab1.text.trim(),
+                                  _ipinControllerTab1.text.trim(),
+                                  sudaniBillPaymentPayeeModel);
+                            } catch (e) {
+                              // handle error
+                            }
+                          }
+                        })
                       ],
                     ),
 
@@ -178,26 +197,31 @@ class SudaniAdSlPage extends StatelessWidget {
                             SizedBox(
                               width: width - (width / 15),
                               child: TextField(
-                                controller: _controllerTab2Field1,
+                                controller: _cardNameControllerTab2,
+                                onChanged: (value) {
+                                  _cardNameControllerTab2.text =
+                                      selectedCardTab2.cardUserName ?? "";
+                                },
                                 style: TextStyle(
                                   fontWeight: FontWeight.w300,
                                 ),
                                 decoration: InputDecoration(
                                     labelText: Localization.of(context)
                                         .getTranslatedValue("Card Number"),
-                                    suffixIcon: PopupMenuButton(
-                                        itemBuilder: (BuildContext context) => [
-                                              PopupMenuItem(
-                                                child: Text("choice 1"),
-                                                value: "choice 1",
-                                              ),
-                                              PopupMenuItem(
-                                                child: Text("choice 2"),
-                                                value: "choice 2",
-                                              )
-                                            ],
+                                    suffixIcon: PopupMenuButton<CardModel>(
+                                        itemBuilder: (BuildContext context) =>
+                                            CardModel.allCards
+                                                .map((card) => PopupMenuItem(
+                                                      child: Text(
+                                                          card.cardUserName),
+                                                      value: card,
+                                                    ))
+                                                .toList(),
                                         onSelected: (value) {
-                                          _controllerTab2Field1.text = value;
+                                          selectedCardTab2 = value;
+                                          _cardNameControllerTab2.text =
+                                              selectedCardTab2.cardUserName;
+                                          print("${value.cardNumber}");
                                         },
                                         icon: Icon(Icons.arrow_drop_down))),
                               ),
@@ -216,31 +240,15 @@ class SudaniAdSlPage extends StatelessWidget {
                             SizedBox(
                               width: width - (width / 15),
                               child: TextField(
-                                controller: _controllerTab2Field2,
-                                onChanged: (string) {},
+                                controller: _phoneNumberControllerTab2,
                                 onSubmitted: (string) {},
                                 style: TextStyle(
                                   fontWeight: FontWeight.w300,
                                 ),
                                 decoration: InputDecoration(
-                                    labelText: Localization.of(context)
-                                        .getTranslatedValue("Phone Number"),
-                                    suffixIcon: PopupMenuButton(
-                                        itemBuilder: (BuildContext context) => [
-                                              PopupMenuItem(
-                                                child: Text("choice 1"),
-                                                value: "choice 1",
-                                              ),
-                                              PopupMenuItem(
-                                                child: Text("choice 2"),
-                                                value: "choice 2",
-                                              )
-                                            ],
-                                        onSelected: (value) {
-                                          _controllerTab2Field2.text = value;
-                                        },
-                                        icon: Icon(Icons.favorite_sharp,
-                                            color: Colors.red))),
+                                  labelText: Localization.of(context)
+                                      .getTranslatedValue("Phone Number"),
+                                ),
                               ),
                             ),
                           ],
@@ -257,7 +265,7 @@ class SudaniAdSlPage extends StatelessWidget {
                             SizedBox(
                               width: width - (width / 15),
                               child: TextField(
-                                controller: _controllerTab2Field3,
+                                controller: _amountController,
                                 onChanged: (string) {},
                                 onSubmitted: (string) {},
                                 style: TextStyle(
@@ -283,7 +291,7 @@ class SudaniAdSlPage extends StatelessWidget {
                             SizedBox(
                               width: width - (width / 15),
                               child: TextField(
-                                controller: _controllerTab2Field4,
+                                controller: _ipinControllerTab2,
                                 onChanged: (string) {},
                                 onSubmitted: (string) {},
                                 style: TextStyle(
@@ -300,7 +308,35 @@ class SudaniAdSlPage extends StatelessWidget {
                         SizedBox(
                           height: height / 40,
                         ),
-                        SubmitButton(() {})
+                        SubmitButton(() async {
+                          if (selectedCardTab2 == null) {
+                            // TODO:notify user to select a card
+                            print("please select a card");
+                          } else if (!isPhoneNumbervalid(
+                              _phoneNumberControllerTab2.text.trim())) {
+                            //TODO: notify user to enter valid phone number
+                            print("Please enter a valid phone number ");
+                          } else if (!isAmountValid(
+                              _amountController.text.trim())) {
+                            //TODO: notify user to enter a valid amount
+                            print("Please enter a valid amount ");
+                          } else if (!isIpinValid(
+                              _ipinControllerTab2.text.trim())) {
+                            //TODO: notify user to enter a valid IPIN
+                            print("please enter a valid IPIN");
+                          } else {
+                            try {
+                              await context.read<ApiService>().payBill(
+                                  selectedCardTab2,
+                                  _phoneNumberControllerTab2.text.trim(),
+                                  int.parse(_amountController.text.trim()),
+                                  _ipinControllerTab2.text.trim(),
+                                  sudaniBillPaymentPayeeModel);
+                            } catch (e) {
+                              // handle error
+                            }
+                          }
+                        })
                       ],
                     ),
                   ]),

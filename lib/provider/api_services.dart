@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:ZoalPay/models/card_model.dart';
+import 'package:ZoalPay/models/payee_model.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_flutter_transformer/dio_flutter_transformer.dart';
@@ -15,9 +16,40 @@ import 'package:ZoalPay/models/api_exception_model.dart' as ApiExceptions;
 class NoIdTokenException implements Exception {}
 
 class ApiService {
-  String _idToken;
-  Map profile;
-  String consumerKey;
+  final String _idToken =
+      "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI5MjIyMjgxMzkiLCJhdXRoIjoiQXV0aG9yaXR5e25hbWU9J1JPTEVfVVNFUid9IiwiZXhwIjoxNjIxNTI1NzI2fQ.dGDkj8xcpKmodpFsO4cl0fuc1LsqH1dQXGQD9iili8nBLGLQN3ZrwH3aJWC7WuhrvzkDNl-kDP9FVuYujP2SEQ";
+  final Map profile = {
+    "id": 14,
+    "login": "922228139",
+    "firstName": null,
+    "lastName": null,
+    "email": null,
+    "bio": null,
+    "createdDate": "2021-04-16T14:33:44Z",
+    "user": {
+      "id": 27,
+      "login": "922228139",
+      "firstName": null,
+      "lastName": null,
+      "email": null,
+      "activated": true,
+      "langKey": "en",
+      "imageUrl": null,
+      "resetDate": "2021-04-16T14:33:44Z"
+    },
+    "image": null,
+    "userMessages": null,
+    "comments": null,
+    "likes": null,
+    "posts": null,
+    "contacts": null,
+    "transactions": null,
+    "favorites": null,
+    "cards": null,
+    "internetCards": null
+  };
+  final String consumerKey =
+      "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBANx4gKYSMv3CrWWsxdPfxDxFvl+Is/0kc1dvMI1yNWDXI3AgdI4127KMUOv7gmwZ6SnRsHX/KAM0IPRe0+Sa0vMCAwEAAQ==";
   String _jwt;
   var uuid = Uuid();
   final dio = Dio(BaseOptions(
@@ -25,17 +57,17 @@ class ApiService {
     contentType: Headers.jsonContentType,
     headers: {HttpHeaders.acceptHeader: Headers.jsonContentType},
   ));
-  ApiService({String token, String jwt})
-      : _idToken = token,
-        _jwt = jwt {
-    dio.transformer = FlutterTransformer();
-    //dio.interceptors.add(_ErrorInterceptor());
-    // dio.interceptors.add(_JwtInterceptor(
-    //   dio: dio,
-    //   jwt: _jwt,
-    //   fetchJwt: _updateJwt,
-    // ));
-  }
+  // ApiService({String token, String jwt})
+  //     : _idToken = token,
+  //       _jwt = jwt {
+  //   dio.transformer = FlutterTransformer();
+  //   //dio.interceptors.add(_ErrorInterceptor());
+  //   // dio.interceptors.add(_JwtInterceptor(
+  //   //   dio: dio,
+  //   //   jwt: _jwt,
+  //   //   fetchJwt: _updateJwt,
+  //   // ));
+  // }
 
   // void setIdToken(String idToken) {
   //   _idToken = idToken;
@@ -96,10 +128,10 @@ class ApiService {
       });
       // set the tokens and other variables
       var jsonResponse = response.data;
-      //jsonResponse = jsonDecode(response.data);
-      profile = jsonResponse["profile"];
-      consumerKey = jsonResponse["consumerKey"];
-      _idToken = jsonResponse["id_token"];
+
+      // profile = jsonResponse["profile"];
+      // consumerKey = jsonResponse["consumerKey"];
+      // _idToken = jsonResponse["id_token"];
 
       dio.interceptors.add(_JwtInterceptor(
         dio: dio,
@@ -125,6 +157,10 @@ class ApiService {
   }
 
   Future<List<CardModel>> getAllCards() async {
+    dio.interceptors.add(_JwtInterceptor(
+      dio: dio,
+      jwt: _idToken,
+    )); // TODO: delete this line when you finish testing
     String endpoint = "/api/card-profile";
     Response response = await dio.get(endpoint);
 
@@ -195,7 +231,100 @@ class ApiService {
     print(response?.data["responseStatus"]);
     if (response?.data["responseStatus"] == "Failed")
       throw ApiExceptions.parseEBSResponseJson(response.data);
-    return [response.data["balance"]["available"] , response.data["PAN"] ];
+    return [response.data["balance"]["available"], response.data["PAN"]];
+  }
+
+  Future<List<PayeeModel>> getPayeeList() async {
+    String endpoint = "/api/consumer/load-payees";
+
+    Response response = await dio.get(endpoint);
+    List<PayeeModel> allPayees = response.data
+        .map<PayeeModel>((payeeJson) => PayeeModel.fromJson(payeeJson))
+        .toList();
+
+    return allPayees;
+  }
+
+  Future<List> mobileTopUp(CardModel card, String Ipin, int amount,
+      PayeeModel payee, String phoneNumber, String comment) async {
+    String phoneNumberWithoutZero = phoneNumber.substring(1);
+    String endpoint = "/api/consumer/payment";
+    String transactionUUID = uuid.v1();
+    String encryptedIPIN =
+        EncrypterUtil.encrypt("$transactionUUID" + "$Ipin", "$consumerKey");
+
+    Map data = {
+      "UUID": "$transactionUUID",
+      "IPIN": "$encryptedIPIN",
+      "tranAmount": amount,
+      "tranCurrency": "SDG",
+      "PAN": "${card.cardNumber}",
+      "expDate": "${card.expiryDate}",
+      "authenticationType": "00",
+      "entityType": null,
+      "entityId": null,
+      "fromAccountType": "00",
+      "toAccountType": "00",
+      "paymentInfo": "MPHONE=" + "$phoneNumberWithoutZero",
+      "payeeId": "$payee.payeeName",
+      "comment": "$comment"
+    };
+
+    Response response = await dio.post(endpoint, data: data);
+
+    return [response.data["PAN"], response.data["billInfo"]["subNewBalance"]];
+  }
+
+  Future<void> getBill(
+      CardModel card, String phoneNumber, String Ipin, PayeeModel payee) async {
+    String endpoint = "/api/consumer/getBill";
+    String phoneNumberWithoutZero = phoneNumber.substring(1);
+    String transactionUUID = uuid.v1();
+    String encryptedIPIN =
+        EncrypterUtil.encrypt("$transactionUUID" + "$Ipin", "$consumerKey");
+
+    Map data = {
+      "UUID": "$transactionUUID",
+      "IPIN": "$encryptedIPIN",
+      "tranCurrency": "SDG",
+      "PAN": "${card.cardNumber}",
+      "expDate": "${card.expiryDate}",
+      "authenticationType": "00",
+      "entityType": null,
+      "entityId": null,
+      "fromAccountType": "00",
+      "toAccountType": "00",
+      "paymentInfo": "MPHONE=" + "$phoneNumberWithoutZero",
+      "payeeId": "$payee.payeeName",
+    };
+
+    Response response = await dio.post(endpoint, data: data);
+  }
+
+  Future<void> payBill(CardModel card, String phoneNumber, int amount,
+      String Ipin, PayeeModel payee) async {
+    String endpoint = "/api/consumer/payment";
+    String phoneNumberWithoutZero = phoneNumber.substring(1);
+    String transactionUUID = uuid.v1();
+    String encryptedIPIN =
+        EncrypterUtil.encrypt("$transactionUUID" + "$Ipin", "$consumerKey");
+
+    Map data = {
+      "UUID": "$transactionUUID",
+      "IPIN": "$encryptedIPIN",
+      "tranCurrency": "SDG",
+      "PAN": "${card.cardNumber}",
+      "expDate": "${card.expiryDate}",
+      "authenticationType": "00",
+      "entityType": null,
+      "entityId": null,
+      "fromAccountType": "00",
+      "toAccountType": "00",
+      "paymentInfo": "MPHONE=" + "$phoneNumberWithoutZero",
+      "payeeId": "$payee.payeeName",
+    };
+
+    Response response = await dio.post(endpoint, data: data);
   }
 
   //

@@ -3,6 +3,7 @@ import 'package:ZoalPay/Widgets/Submit_Button.dart';
 import 'package:ZoalPay/lang/Localization.dart';
 import 'package:ZoalPay/pages/AfterLoggingInPages/ReceiptPages/Transaction_details.dart';
 import 'package:ZoalPay/provider/api_services.dart';
+import 'package:ZoalPay/utils/validators.dart';
 import 'package:flutter/material.dart';
 import 'package:ZoalPay/models/card_model.dart';
 import 'package:provider/provider.dart';
@@ -18,8 +19,6 @@ class CardBalancePage extends StatelessWidget {
   build(context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
-    String pattern = r'(^[0-9]{4}$)';
-    RegExp regExp = RegExp(pattern);
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -66,18 +65,7 @@ class CardBalancePage extends StatelessWidget {
                                         child: Text(card.cardUserName),
                                         value: card,
                                       ))
-                                  .toList()
-                          //  [
-                          //       PopupMenuItem(
-                          //         child: Text("choice 1"),
-                          //         value: "choice 1",
-                          //       ),
-                          //       PopupMenuItem(
-                          //         child: Text("choice 2"),
-                          //         value: "choice 2",
-                          //       )
-                          //     ]
-                          ,
+                                  .toList(),
                           onSelected: (value) {
                             selectedCard = value;
                             _cardNameController.text =
@@ -124,7 +112,7 @@ class CardBalancePage extends StatelessWidget {
             if (selectedCard == null) {
               // TODO:notify user to select a card
               print("please select a card");
-            } else if (!regExp.hasMatch(_IPINController.text.trim())) {
+            } else if (!isIpinValid(_IPINController.text.trim())) {
               //TODO: notify user to enter a valid IPIN
               print("please enter a valid IPIN");
             } else {
@@ -135,13 +123,15 @@ class CardBalancePage extends StatelessWidget {
                 List balanceAndPan = await context
                     .read<ApiService>()
                     .getBalance(selectedCard, _IPINController.text.trim());
-              Navigator.pop(context);
+                Navigator.pop(context);
                 print("going to the balance page");
                 // navigate to the recipt page.
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => TransactionDetails(balance: balanceAndPan[0],cardNumber:balanceAndPan[1]),
+                      builder: (context) => TransactionDetails(
+                          balance: balanceAndPan[0],
+                          cardNumber: balanceAndPan[1]),
                     ));
               } catch (e) {
                 // remmber to handle the case where a wrong IPIN is entered
