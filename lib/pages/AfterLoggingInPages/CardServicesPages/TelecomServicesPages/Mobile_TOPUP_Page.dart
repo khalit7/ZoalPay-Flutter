@@ -4,6 +4,7 @@ import 'package:ZoalPay/Widgets/Submit_Button.dart';
 import 'package:ZoalPay/lang/Localization.dart';
 import 'package:ZoalPay/models/card_model.dart';
 import 'package:ZoalPay/models/payee_model.dart';
+import 'package:ZoalPay/pages/AfterLoggingInPages/ReceiptPages/Transaction_Receipt.dart';
 import 'package:ZoalPay/provider/api_services.dart';
 import 'package:provider/provider.dart';
 import 'package:ZoalPay/utils/validators.dart';
@@ -263,8 +264,24 @@ class MobileTopUpPage extends StatelessWidget {
                         selectedOperator,
                         _phoneNumberController.text.trim(),
                         _commentController.text.trim());
+                String date = DateTime.now().toString().substring(0,
+                    19); // this is to formate date time from UTZ to yy-mm-dd-hh-m-ss
 
                 Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => TransactionReceipt(
+                              subTitle: "Mobile TOPUP",
+                              transactionValue: _amountController.text.trim(),
+                              pageDetails: {
+                                "Card Number": cardNumAndCurrBalance[0],
+                                "Current Balance": cardNumAndCurrBalance[1].toString(),
+                                "Phone Number":_phoneNumberController.text.trim(),
+                                "Date": date,
+                                "Comment":_commentController.text.trim()
+                              },
+                            )));
                 print("going to the recipt page page");
                 // parameters to pass already ready : _amountController.text.trim() , _phoneNumberController.text.trim() ,  _commentController.text.trim()
                 // parameters to pass comming from api request : card number , current balance

@@ -17,6 +17,7 @@ import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Money_Transf
 import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Money_Transfer_Pages/Transfer_Card_To_Card_Page.dart';
 import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Money_Transfer_Pages/Voucher_Page.dart';
 import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Telecom_Services_Page.dart';
+import 'package:ZoalPay/pages/AfterLoggingInPages/ReceiptPages/Transaction_Receipt.dart';
 import 'package:ZoalPay/pages/HomePagePages/LoginPage.dart';
 import 'package:ZoalPay/pages/HomePagePages/NewAccountPage.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +35,6 @@ import 'pages/AfterLoggingInPages/CardServicesPages/TelecomServicesPages/Mobile_
 import 'pages/AfterLoggingInPages/CardServicesPages/TelecomServicesPages/Sudani_ADSL_Page.dart';
 import 'pages/AfterLoggingInPages/CardServicesPages/Zoal_Khair_Page.dart';
 import 'pages/AfterLoggingInPages/Card_Services_Page.dart';
-import 'package:ZoalPay/pages/AfterLoggingInPages/ReceiptPages/Transaction_details.dart';
 import 'pages/Home_Page.dart';
 import 'package:ZoalPay/pages/HomePagePages/validate_otp_page.dart';
 
@@ -117,7 +117,7 @@ class _MyAppState extends State<MyApp> {
               EntertainmentCardHistoryPage(),
           AboutUsPage.pageName: (context) => AboutUsPage(),
           ValidateOtpPage.pageName: (context) => ValidateOtpPage(),
-          TransactionDetails.pageName: (context) => TransactionDetails(),
+          TransactionReceipt.pageName: (context) => TransactionReceipt(),
         });
   }
 }
