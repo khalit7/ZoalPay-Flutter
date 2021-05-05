@@ -1,4 +1,5 @@
 import 'package:ZoalPay/Widgets/Custom_Flat_Button.dart';
+import 'package:ZoalPay/Widgets/Loading_widget.dart';
 import 'package:ZoalPay/lang/Localization.dart';
 import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Drawer_pages/About_Us_page.dart';
 import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Drawer_pages/Card_Balance_Page.dart';
@@ -8,6 +9,8 @@ import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Drawer_pages
 import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Drawer_pages/Favourites_Page.dart';
 import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Drawer_pages/Generate_IPIN_Page.dart';
 import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Drawer_pages/Transaction_History_Page.dart';
+import 'package:ZoalPay/provider/api_services.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
 import '../zoalPayApp.dart';
@@ -156,9 +159,13 @@ class CustomDrawer extends StatelessWidget {
             ),
             // Transaction History
             ListTile(
-              onTap: () {
-                Navigator.popAndPushNamed(
-                    context, TransactionHistoryPage.pageName);
+              onTap: () async {
+                showLoadingDialog(context);
+                List allTransactions =
+                    await context.read<ApiService>().getTransactionHistory();
+                Navigator.pop(context);
+                // Navigator.popAndPushNamed(
+                //     context, TransactionHistoryPage.pageName);
               },
               leading:
                   Icon(Icons.history_toggle_off_sharp, color: Colors.white),

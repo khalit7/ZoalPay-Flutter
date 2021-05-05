@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:ZoalPay/models/card_model.dart';
 import 'package:ZoalPay/models/payee_model.dart';
+import 'package:ZoalPay/models/transaction_model.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_flutter_transformer/dio_flutter_transformer.dart';
@@ -245,35 +246,35 @@ class ApiService {
     return allPayees;
   }
 
-  Future<List> mobileTopUp(CardModel card, String Ipin, int amount,
-      PayeeModel payee, String phoneNumber, String comment) async {
-    String phoneNumberWithoutZero = phoneNumber.substring(1);
-    String endpoint = "/api/consumer/payment";
-    String transactionUUID = uuid.v1();
-    String encryptedIPIN =
-        EncrypterUtil.encrypt("$transactionUUID" + "$Ipin", "$consumerKey");
+  // Future<List> mobileTopUp(CardModel card, String Ipin, int amount,
+  //     PayeeModel payee, String phoneNumber, String comment) async {
+  //   String phoneNumberWithoutZero = phoneNumber.substring(1);
+  //   String endpoint = "/api/consumer/payment";
+  //   String transactionUUID = uuid.v1();
+  //   String encryptedIPIN =
+  //       EncrypterUtil.encrypt("$transactionUUID" + "$Ipin", "$consumerKey");
 
-    Map data = {
-      "UUID": "$transactionUUID",
-      "IPIN": "$encryptedIPIN",
-      "tranAmount": amount,
-      "tranCurrency": "SDG",
-      "PAN": "${card.cardNumber}",
-      "expDate": "${card.expiryDate}",
-      "authenticationType": "00",
-      "entityType": null,
-      "entityId": null,
-      "fromAccountType": "00",
-      "toAccountType": "00",
-      "paymentInfo": "MPHONE=" + "$phoneNumberWithoutZero",
-      "payeeId": "$payee.payeeName",
-      "comment": "$comment"
-    };
+  //   Map data = {
+  //     "UUID": "$transactionUUID",
+  //     "IPIN": "$encryptedIPIN",
+  //     "tranAmount": amount,
+  //     "tranCurrency": "SDG",
+  //     "PAN": "${card.cardNumber}",
+  //     "expDate": "${card.expiryDate}",
+  //     "authenticationType": "00",
+  //     "entityType": null,
+  //     "entityId": null,
+  //     "fromAccountType": "00",
+  //     "toAccountType": "00",
+  //     "paymentInfo": "MPHONE=" + "$phoneNumberWithoutZero",
+  //     "payeeId": "$payee.payeeName",
+  //     "comment": "$comment"
+  //   };
 
-    Response response = await dio.post(endpoint, data: data);
+  //   Response response = await dio.post(endpoint, data: data);
 
-    return [response.data["PAN"], response.data["billInfo"]["subNewBalance"]];
-  }
+  //   return [response.data["PAN"], response.data["billInfo"]["subNewBalance"]];
+  // }
 
   Future<void> getBill(
       CardModel card, String phoneNumber, String Ipin, PayeeModel payee) async {
@@ -301,8 +302,8 @@ class ApiService {
     Response response = await dio.post(endpoint, data: data);
   }
 
-  Future<void> payBill(CardModel card, String phoneNumber, int amount,
-      String Ipin, PayeeModel payee) async {
+  Future<String> payBill(CardModel card, String Ipin, int amount,
+      PayeeModel payee, String phoneNumber, String comment) async {
     String endpoint = "/api/consumer/payment";
     String phoneNumberWithoutZero = phoneNumber.substring(1);
     String transactionUUID = uuid.v1();
@@ -312,6 +313,7 @@ class ApiService {
     Map data = {
       "UUID": "$transactionUUID",
       "IPIN": "$encryptedIPIN",
+      "tranAmount": amount,
       "tranCurrency": "SDG",
       "PAN": "${card.cardNumber}",
       "expDate": "${card.expiryDate}",
@@ -321,10 +323,33 @@ class ApiService {
       "fromAccountType": "00",
       "toAccountType": "00",
       "paymentInfo": "MPHONE=" + "$phoneNumberWithoutZero",
-      "payeeId": "$payee.payeeName",
+      "payeeId": "${payee.payeeName}",
+      "comment": "$comment"
     };
 
     Response response = await dio.post(endpoint, data: data);
+    return response.data["PAN"];
+  }
+
+  Future<List<TransactionModel>> getTransactionHistory() async {
+    String endpoint = "/api/profile-transactions";
+
+    Response response = await dio.get(endpoint);
+    List<TransactionModel> allTransactions = [];
+    // loop throw all transactions
+    response.data["content"].forEach((transactionJson) {
+      if (transactionJson["type"].startsWith("Consumer"))
+        allTransactions.add(TransactionModel.fromJson(transactionJson));
+      //TODO:implement other cases here
+    });
+    //filter unwanted transactions
+    allTransactions.where((transaction) {
+      if (transaction.type.split(" ").last == "getPayeesList")
+        return false;
+      else
+        return true;
+    }).toList();
+    return allTransactions;
   }
 
   //

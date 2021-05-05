@@ -255,15 +255,13 @@ class MobileTopUpPage extends StatelessWidget {
               try {
                 showLoadingDialog(context);
 
-                var cardNumAndCurrBalance = await context
-                    .read<ApiService>()
-                    .mobileTopUp(
-                        selectedCard,
-                        _IpinController.text.trim(),
-                        int.parse(_amountController.text.trim()),
-                        selectedOperator,
-                        _phoneNumberController.text.trim(),
-                        _commentController.text.trim());
+                String cardNumber = await context.read<ApiService>().payBill(
+                    selectedCard,
+                    _IpinController.text.trim(),
+                    int.parse(_amountController.text.trim()),
+                    selectedOperator,
+                    _phoneNumberController.text.trim(),
+                    _commentController.text.trim());
                 String date = DateTime.now().toString().substring(0,
                     19); // this is to formate date time from UTZ to yy-mm-dd-hh-m-ss
 
@@ -275,11 +273,12 @@ class MobileTopUpPage extends StatelessWidget {
                               subTitle: "Mobile TOPUP",
                               transactionValue: _amountController.text.trim(),
                               pageDetails: {
-                                "Card Number": cardNumAndCurrBalance[0],
-                                "Current Balance": cardNumAndCurrBalance[1].toString(),
-                                "Phone Number":_phoneNumberController.text.trim(),
+                                "Card Number": cardNumber,
+                                "Amount": _amountController.text.trim(),
+                                "Phone Number":
+                                    _phoneNumberController.text.trim(),
                                 "Date": date,
-                                "Comment":_commentController.text.trim()
+                                "Comment": _commentController.text.trim()
                               },
                             )));
                 print("going to the recipt page page");

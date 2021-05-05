@@ -1,8 +1,10 @@
 import 'package:ZoalPay/Widgets/Custom_Drawer.dart';
+import 'package:ZoalPay/Widgets/Loading_widget.dart';
 import 'package:ZoalPay/Widgets/Submit_Button.dart';
 import 'package:ZoalPay/lang/Localization.dart';
 import 'package:ZoalPay/models/card_model.dart';
 import 'package:ZoalPay/models/payee_model.dart';
+import 'package:ZoalPay/pages/AfterLoggingInPages/ReceiptPages/Transaction_Receipt.dart';
 import 'package:ZoalPay/provider/api_services.dart';
 import 'package:provider/provider.dart';
 import 'package:ZoalPay/utils/validators.dart';
@@ -510,13 +512,39 @@ class BillPaymentPage extends StatelessWidget {
                         } else {
                           // attempt bill payment transaction:
                           try {
-                            await context.read<ApiService>().payBill(
-                                selectedCardTab2,
-                                _phoneNumberControllertab2.text.trim(),
-                                int.parse(_amountControllerTab2.text.trim()),
-                                _ipinControllerTab2.text.trim(),
-                                selectedOperatorTab2);
+                            showLoadingDialog(context);
+                            String cardNum = await context
+                                .read<ApiService>()
+                                .payBill(
+                                    selectedCardTab2,
+                                    _ipinControllerTab2.text.trim(),
+                                    int.parse(
+                                        _amountControllerTab2.text.trim()),
+                                    selectedOperatorTab2,
+                                    _phoneNumberControllertab2.text.trim(),
+                                    _commentControllerTab2.text.trim());
+                            String date = DateTime.now().toString().substring(0,
+                                19); // this is to formate date time from UTZ to yy-mm-dd-hh-m-ss
+                            Navigator.pop(context);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => TransactionReceipt(
+                                          subTitle: "Bill Payment",
+                                          transactionValue:
+                                              _amountControllerTab2.text.trim(),
+                                          pageDetails: {
+                                            "Card Number": cardNum,
+                                            "Amount": _amountControllerTab2.text
+                                                .trim(),
+                                            "Phone Number":
+                                                _phoneNumberControllertab2.text
+                                                    .trim(),
+                                            "Date": date,
+                                          },
+                                        )));
                           } catch (e) {
+                            Navigator.pop(context);
                             // handle error
                           }
                         }

@@ -1,8 +1,10 @@
 import 'package:ZoalPay/Widgets/Custom_Drawer.dart';
+import 'package:ZoalPay/Widgets/Loading_widget.dart';
 import 'package:ZoalPay/Widgets/Submit_Button.dart';
 import 'package:ZoalPay/lang/Localization.dart';
 import 'package:ZoalPay/models/card_model.dart';
 import 'package:ZoalPay/models/payee_model.dart';
+import 'package:ZoalPay/pages/AfterLoggingInPages/ReceiptPages/Transaction_Receipt.dart';
 import 'package:ZoalPay/provider/api_services.dart';
 import 'package:provider/provider.dart';
 import 'package:ZoalPay/utils/validators.dart';
@@ -326,13 +328,41 @@ class SudaniAdSlPage extends StatelessWidget {
                             print("please enter a valid IPIN");
                           } else {
                             try {
-                              await context.read<ApiService>().payBill(
-                                  selectedCardTab2,
-                                  _phoneNumberControllerTab2.text.trim(),
-                                  int.parse(_amountController.text.trim()),
-                                  _ipinControllerTab2.text.trim(),
-                                  sudaniBillPaymentPayeeModel);
+                              showLoadingDialog(context);
+                              String cardNum = await context
+                                  .read<ApiService>()
+                                  .payBill(
+                                      selectedCardTab2,
+                                      _ipinControllerTab2.text.trim(),
+                                      int.parse(_amountController.text.trim()),
+                                      sudaniBillPaymentPayeeModel,
+                                      _phoneNumberControllerTab2.text.trim(),
+                                      ""); // make sure that there is no comment interface in this page
+                              String date = DateTime.now().toString().substring(
+                                  0,
+                                  19); // this is to formate date time from UTZ to yy-mm-dd-hh-m-ss
+                              Navigator.pop(context);
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => TransactionReceipt(
+                                            subTitle:
+                                                "Sudani ADSL bill Payment",
+                                            transactionValue:
+                                                _amountController.text.trim(),
+                                            pageDetails: {
+                                              "Card Number": cardNum,
+                                              "Amount":
+                                                  _amountController.text.trim(),
+                                              "Phone Number":
+                                                  _phoneNumberControllerTab2
+                                                      .text
+                                                      .trim(),
+                                              "Date": date,
+                                            },
+                                          )));
                             } catch (e) {
+                              Navigator.pop(context);
                               // handle error
                             }
                           }
