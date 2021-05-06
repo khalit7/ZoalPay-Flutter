@@ -16,7 +16,7 @@ class TransactionModel {
       : this.pan = json['pan'],
         this.date = _formatDate(json["tranDateTime"]),
         this.responseMessage = json["responseMessage"],
-        this.transactionAmount = json["transactionAmount"],
+        this.transactionAmount = json["tranAmount"],
         this.comment = json["comment"],
         this.isSuccessful = json["responseStatus"] == "Successful",
         this.phoneNumber = json["ebsResponse"] == null

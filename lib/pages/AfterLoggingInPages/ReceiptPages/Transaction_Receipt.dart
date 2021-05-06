@@ -45,7 +45,7 @@ build(context) {
               ),
               Center(
                 child: Text(
-                  Localization.of(context).getTranslatedValue(subTitle),
+                  Localization.of(context).getTranslatedValue(subTitle)?? subTitle,
                   style: TextStyle(fontSize: width * height / 15000),
                   textAlign: TextAlign.center,
                 ),
