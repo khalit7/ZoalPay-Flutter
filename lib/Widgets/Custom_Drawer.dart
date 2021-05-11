@@ -164,7 +164,6 @@ class CustomDrawer extends StatelessWidget {
                 List allTransactions =
                     await context.read<ApiService>().getTransactionHistory();
                 Navigator.pop(context);
-                Navigator.pop(context);
                 Navigator.push(
                     context,
                     MaterialPageRoute(

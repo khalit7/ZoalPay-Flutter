@@ -281,7 +281,7 @@ class MobileTopUpPage extends StatelessWidget {
                                 "Comment": _commentController.text.trim()
                               },
                             )));
-                print("going to the recipt page page");
+
                 // parameters to pass already ready : _amountController.text.trim() , _phoneNumberController.text.trim() ,  _commentController.text.trim()
                 // parameters to pass comming from api request : card number , current balance
                 // navigate to the recipt page.

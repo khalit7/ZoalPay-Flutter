@@ -109,8 +109,8 @@ class _ValidateOtpPageState extends State<ValidateOtpPage> with CodeAutoFill {
                             .getAllCards();
 
                         // fetch payee list
-                        PayeeModel.allPayees =
-                            await context.read<ApiService>().getPayeeList();
+                        // PayeeModel.allPayees =
+                        //     await context.read<ApiService>().getPayeeList();
 
                         Navigator.pop(context);
 

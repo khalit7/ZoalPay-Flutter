@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Money_Transfer_Pages/Voucher_Page.dart';
+
 class TransactionModel {
   String pan;
   DateTime date;
@@ -9,6 +11,8 @@ class TransactionModel {
   String comment;
   bool isSuccessful;
   String type;
+  String reciverCard;
+  String voucherCode;
 
   static List<TransactionModel> allTransactions = [];
 
@@ -16,14 +20,24 @@ class TransactionModel {
       : this.pan = json['pan'],
         this.date = _formatDate(json["tranDateTime"]),
         this.responseMessage = json["responseMessage"],
-        this.transactionAmount = json["tranAmount"],
-        this.comment = json["comment"],
         this.isSuccessful = json["responseStatus"] == "Successful",
+        this.transactionAmount = json["responseStatus"] == "Successful"
+            ? json["tranAmount"] != null
+                ? json["tranAmount"]
+                : jsonDecode(json["ebsResponse"])["balance"]["available"]
+            : null,
+        this.comment = json["comment"],
         this.phoneNumber = json["ebsResponse"] == null
             ? null
             : jsonDecode(json["ebsResponse"])["paymentInfo"]
                 ?.substring(7), // change this to the actual json location.
-        this.type = json["type"];
+        this.type = json["type"],
+        this.voucherCode = json["responseStatus"] == "Successful"
+            ? jsonDecode(json["ebsResponse"])["voucherCode"]
+            : null,
+        this.reciverCard = json["responseStatus"] == "Successful"
+            ? jsonDecode(json["ebsResponse"])["toCard"]
+            : null;
 }
 
 // class ConsumerTransacionModel extends TransactionModel {

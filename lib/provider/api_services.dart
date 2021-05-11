@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:ZoalPay/models/card_model.dart';
@@ -332,26 +333,81 @@ class ApiService {
   }
 
   Future<List<TransactionModel>> getTransactionHistory() async {
-    String endpoint = "/api/profile-transactions";
+    String endpoint = "/api/all-profile-transactions";
 
     Response response = await dio.get(endpoint);
     List<TransactionModel> allTransactions = [];
     // loop throw all transactions
-    response.data["content"].forEach((transactionJson) {
-      if (transactionJson["type"].startsWith("Consumer"))
-        allTransactions.add(TransactionModel.fromJson(transactionJson));
+    response.data.forEach((transactionJson) {
+      if (transactionJson["type"].startsWith("Consumer")) {
+        if (transactionJson["type"].split(" ").last != "getPayeesList" &&
+            transactionJson["type"].split(" ").last != "getPublicKey")
+          allTransactions.add(TransactionModel.fromJson(transactionJson));
+      }
       //TODO:implement other cases here
     });
     //filter unwanted transactions
-    allTransactions.where((transaction) {
+    allTransactions = allTransactions.where((transaction) {
       if (transaction.type.split(" ").last == "getPayeesList")
+        return false;
+      else if (transaction.type.split(" ").last == "getPublicKey")
         return false;
       else
         return true;
     }).toList();
-    return allTransactions;
+    return allTransactions.reversed.toList();
   }
 
+  Future<void> cardTransfer(CardModel senderCard, String reciverATMCardNmber,
+      String Ipin, int amount, String comment) async {
+    String endpoint = "/api/consumer/doCardTransfer";
+    String transactionUUID = uuid.v1();
+    String encryptedIPIN =
+        EncrypterUtil.encrypt("$transactionUUID" + "$Ipin", "$consumerKey");
+
+    Map data = {
+      "UUID": "$transactionUUID",
+      "IPIN": "$encryptedIPIN",
+      "tranCurrency": "SDG",
+      "tranAmount": amount,
+      "toCard": "$reciverATMCardNmber",
+      "authenticationType": "00",
+      "fromAccountType": "00",
+      "toAccountType": "00",
+      "PAN": "${senderCard.cardNumber}",
+      "expDate": "${senderCard.expiryDate}",
+      "comment": "$comment"
+    };
+
+    Response response = await dio.post(endpoint, data: data);
+  }
+
+  Future<String> generateVoucher(
+      CardModel card, String Ipin, int amount, String phoneNumber) async {
+    String endpoint = "/api/consumer/generateVoucher";
+    String transactionUUID = uuid.v1();
+    String encryptedIPIN =
+        EncrypterUtil.encrypt("$transactionUUID" + "$Ipin", "$consumerKey");
+    String phoneNumberWithoutZero = phoneNumber.substring(1);
+
+    Map data = {
+      "UUID": "$transactionUUID",
+      "IPIN": "$encryptedIPIN",
+      "tranCurrency": "SDG",
+      "tranAmount": amount,
+      "voucherNumber": "$phoneNumber",
+      "authenticationType": "00",
+      "fromAccountType": "00",
+      "toAccountType": "00",
+      "PAN": "${card.cardNumber}",
+      "expDate": "${card.expiryDate}"
+    };
+
+    Response response = await dio.post(endpoint, data: data);
+
+    //TODO: do some error handeling ... to make faild transactions not lead us to recipt page.
+    return response.data["voucherCode"];
+  }
   //
 }
 

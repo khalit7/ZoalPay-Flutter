@@ -2,6 +2,7 @@ import 'dart:core';
 import 'package:ZoalPay/lang/Localization.dart';
 import 'package:ZoalPay/models/transaction_model.dart';
 import 'package:ZoalPay/pages/AfterLoggingInPages/ReceiptPages/Transaction_Receipt.dart';
+import 'package:ZoalPay/utils/stringManipulation.dart';
 import 'package:flutter/material.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 
@@ -57,23 +58,32 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                           onTap: () {
                             if (!transaction.isSuccessful) return;
                             Map _pageDetails = {};
-                            if(transaction.pan!=null)
-                            _pageDetails["Card Number"]=transaction.pan;
-                            if(transaction.date!=null)
-                            _pageDetails["Date"]=DateFormat.yMd().format(transaction.date);
-                            if(transaction.phoneNumber!=null)
-                            _pageDetails["Phone Number"]=transaction.phoneNumber;
-                            if(transaction.comment!=null)
-                            _pageDetails["Comment"]=transaction.comment;
+                            if (transaction.pan != null)
+                              _pageDetails["Card Number"] = transaction.pan;
+                            if (transaction.date != null)
+                              _pageDetails["Date"] =
+                                  DateFormat.yMd().format(transaction.date);
+                            if (transaction.phoneNumber != null)
+                              _pageDetails["Phone Number"] =
+                                  transaction.phoneNumber;
+                            if (transaction.comment != null)
+                              _pageDetails["Comment"] = transaction.comment;
+                            if (transaction.voucherCode != null)
+                              _pageDetails["Voucher Code"] =
+                                  transaction.voucherCode;
+                            if (transaction.reciverCard != null)
+                              _pageDetails["To Card"] =
+                                  concealCardNumber(transaction.reciverCard);
 
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => TransactionReceipt(
                                           subTitle: transaction.type,
-                                          transactionValue: transaction.transactionAmount.toString(),
+                                          transactionValue: transaction
+                                              .transactionAmount
+                                              .toString(),
                                           pageDetails: _pageDetails,
-
                                         )));
                             ;
                           },
