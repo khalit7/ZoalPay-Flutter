@@ -1,22 +1,24 @@
 import 'package:ZoalPay/Widgets/Custom_Drawer.dart';
 import 'package:ZoalPay/Widgets/Submit_Button.dart';
 import 'package:ZoalPay/lang/Localization.dart';
+import 'package:ZoalPay/models/card_model.dart';
 import 'package:flutter/material.dart';
 
 class Customs extends StatelessWidget {
   static final pageName = "Customs";
-  var _controllerTab2Field1 = TextEditingController();
-  var _controllerTab2Field2 = TextEditingController();
-  var _controllerTab2Field3 = TextEditingController();
-  var _controllerTab2Field4 = TextEditingController();
-  var _controllerTab2Field5 = TextEditingController();
-  var _controllerTab2Field6 = TextEditingController();
-  var _controllerTab1Field1 = TextEditingController();
-  var _controllerTab1Field2 = TextEditingController();
-  var _controllerTab1Field3 = TextEditingController();
-  var _controllerTab1Field4 = TextEditingController();
+  var _cardNumberControllerTab2 = TextEditingController();
+  var _bankCodeControllerTab2 = TextEditingController();
+  var _declarantControllerTab2 = TextEditingController();
+  var _amountController = TextEditingController();
+  var _commentController = TextEditingController();
+  var _ipinControllerTab2 = TextEditingController();
+  var _cardNameControllerTab1 = TextEditingController();
+  var _bankCodeControllerTab1 = TextEditingController();
+  var _declarantControllerTab1 = TextEditingController();
+  var _ipinControllerTab1 = TextEditingController();
 
   build(context) {
+    CardModel selectedCard;
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
 
@@ -68,26 +70,27 @@ class Customs extends StatelessWidget {
                           SizedBox(
                             width: width - (width / 15),
                             child: TextField(
-                              controller: _controllerTab1Field1,
+                              controller: _cardNameControllerTab1,
                               style: TextStyle(
                                 fontWeight: FontWeight.w300,
                               ),
                               decoration: InputDecoration(
                                   labelText: Localization.of(context)
                                       .getTranslatedValue("Card Number"),
-                                  suffixIcon: PopupMenuButton(
-                                      itemBuilder: (BuildContext context) => [
-                                            PopupMenuItem(
-                                              child: Text("choice 1"),
-                                              value: "choice 1",
-                                            ),
-                                            PopupMenuItem(
-                                              child: Text("choice 2"),
-                                              value: "choice 2",
-                                            )
-                                          ],
+                                  suffixIcon: PopupMenuButton<CardModel>(
+                                      itemBuilder: (BuildContext context) =>
+                                          CardModel.allCards
+                                              .map((card) => PopupMenuItem(
+                                                    child:
+                                                        Text(card.cardUserName),
+                                                    value: card,
+                                                  ))
+                                              .toList(),
                                       onSelected: (value) {
-                                        _controllerTab1Field1.text = value;
+                                        selectedCard = value;
+                                        _cardNameControllerTab1.text =
+                                            selectedCard.cardUserName;
+                                        print("${value.cardNumber}");
                                       },
                                       icon: Icon(Icons.arrow_drop_down))),
                             ),
@@ -106,7 +109,7 @@ class Customs extends StatelessWidget {
                           SizedBox(
                             width: width - (width / 15),
                             child: TextField(
-                              controller: _controllerTab1Field2,
+                              controller: _bankCodeControllerTab1,
                               onChanged: (string) {},
                               onSubmitted: (string) {},
                               style: TextStyle(
@@ -132,7 +135,7 @@ class Customs extends StatelessWidget {
                           SizedBox(
                             width: width - (width / 15),
                             child: TextField(
-                              controller: _controllerTab1Field3,
+                              controller: _declarantControllerTab1,
                               onChanged: (string) {},
                               onSubmitted: (string) {},
                               style: TextStyle(
@@ -158,7 +161,7 @@ class Customs extends StatelessWidget {
                           SizedBox(
                             width: width - (width / 15),
                             child: TextField(
-                              controller: _controllerTab1Field4,
+                              controller: _ipinControllerTab1,
                               onChanged: (string) {},
                               onSubmitted: (string) {},
                               style: TextStyle(
@@ -193,26 +196,27 @@ class Customs extends StatelessWidget {
                           SizedBox(
                             width: width - (width / 15),
                             child: TextField(
-                              controller: _controllerTab2Field1,
+                              controller: _cardNumberControllerTab2,
                               style: TextStyle(
                                 fontWeight: FontWeight.w300,
                               ),
                               decoration: InputDecoration(
                                   labelText: Localization.of(context)
                                       .getTranslatedValue("Card Number"),
-                                  suffixIcon: PopupMenuButton(
-                                      itemBuilder: (BuildContext context) => [
-                                            PopupMenuItem(
-                                              child: Text("choice 1"),
-                                              value: "choice 1",
-                                            ),
-                                            PopupMenuItem(
-                                              child: Text("choice 2"),
-                                              value: "choice 2",
-                                            )
-                                          ],
+                                  suffixIcon: PopupMenuButton<CardModel>(
+                                      itemBuilder: (BuildContext context) =>
+                                          CardModel.allCards
+                                              .map((card) => PopupMenuItem(
+                                                    child:
+                                                        Text(card.cardUserName),
+                                                    value: card,
+                                                  ))
+                                              .toList(),
                                       onSelected: (value) {
-                                        _controllerTab2Field1.text = value;
+                                        selectedCard = value;
+                                        _cardNumberControllerTab2.text =
+                                            selectedCard.cardUserName;
+                                        print("${value.cardNumber}");
                                       },
                                       icon: Icon(Icons.arrow_drop_down))),
                             ),
@@ -231,7 +235,7 @@ class Customs extends StatelessWidget {
                           SizedBox(
                             width: width - (width / 15),
                             child: TextField(
-                              controller: _controllerTab2Field2,
+                              controller: _bankCodeControllerTab2,
                               onChanged: (string) {},
                               onSubmitted: (string) {},
                               style: TextStyle(
@@ -257,7 +261,7 @@ class Customs extends StatelessWidget {
                           SizedBox(
                             width: width - (width / 15),
                             child: TextField(
-                              controller: _controllerTab2Field3,
+                              controller: _declarantControllerTab2,
                               onChanged: (string) {},
                               onSubmitted: (string) {},
                               style: TextStyle(
@@ -283,7 +287,7 @@ class Customs extends StatelessWidget {
                           SizedBox(
                             width: width - (width / 15),
                             child: TextField(
-                              controller: _controllerTab2Field4,
+                              controller: _amountController,
                               onChanged: (string) {},
                               onSubmitted: (string) {},
                               style: TextStyle(
@@ -309,7 +313,7 @@ class Customs extends StatelessWidget {
                           SizedBox(
                             width: width - (width / 15),
                             child: TextField(
-                              controller: _controllerTab2Field5,
+                              controller: _commentController,
                               onChanged: (string) {},
                               onSubmitted: (string) {},
                               style: TextStyle(
@@ -335,7 +339,7 @@ class Customs extends StatelessWidget {
                           SizedBox(
                             width: width - (width / 15),
                             child: TextField(
-                              controller: _controllerTab2Field6,
+                              controller: _ipinControllerTab2,
                               onChanged: (string) {},
                               onSubmitted: (string) {},
                               style: TextStyle(

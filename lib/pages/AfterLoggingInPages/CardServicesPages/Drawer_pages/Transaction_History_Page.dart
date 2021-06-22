@@ -63,9 +63,8 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                             if (transaction.date != null)
                               _pageDetails["Date"] =
                                   DateFormat.yMd().format(transaction.date);
-                            if (transaction.phoneNumber != null)
-                              _pageDetails["Phone Number"] =
-                                  transaction.phoneNumber;
+                            if (transaction.number != null)
+                              _pageDetails["number"] = transaction.number;
                             if (transaction.comment != null)
                               _pageDetails["Comment"] = transaction.comment;
                             if (transaction.voucherCode != null)
@@ -74,7 +73,17 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                             if (transaction.reciverCard != null)
                               _pageDetails["To Card"] =
                                   concealCardNumber(transaction.reciverCard);
-
+                            if (transaction.customerName != null)
+                              _pageDetails["customer Name"] =
+                                  transaction.customerName;
+                            if (transaction.token != null)
+                              _pageDetails["token"] = transaction.token;
+                            if (transaction.meterNumber != null)
+                              _pageDetails["Meter Number"] =
+                                  transaction.meterNumber;
+                            if (transaction.waterFees != null)
+                              _pageDetails["water Fees"] =
+                                  transaction.waterFees;
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(

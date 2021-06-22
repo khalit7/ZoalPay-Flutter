@@ -2,50 +2,57 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:ZoalPay/lang/Localization.dart';
 
-
 class TransactionReceipt extends StatelessWidget {
-  static final pageName="TransactionReceipt";
+  static final pageName = "TransactionReceipt";
   String subTitle;
   String transactionValue;
   Map pageDetails;
-  TransactionReceipt({this.subTitle,this.transactionValue,this.pageDetails});
-build(context) {
-    var width = MediaQuery.of(context).size.width;  
+  TransactionReceipt({this.subTitle, this.transactionValue, this.pageDetails});
+  build(context) {
+    var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
     return Scaffold(
-        appBar: AppBar(automaticallyImplyLeading: false,
-          title: Text(
-            Localization.of(context).getTranslatedValue("Transaction Details"),
-          ),
-          actions: [GestureDetector(onTap: (){
-            Navigator.pop(context);
-          },child: Icon(Icons.close),)],
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text(
+          Localization.of(context).getTranslatedValue("Transaction Details"),
         ),
-        body: Stack(
+        actions: [
+          GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Icon(Icons.close),
+          )
+        ],
+      ),
+      body: Stack(
         children: [
           Center(
               child: Opacity(
             opacity: 0.2,
             child: Image.asset(
-              "assets/zoalPayLogo.png",
+              "assets/images/zoalPayLogo.png",
               scale: width * height / 40000,
             ),
           )),
-          Column(
+          ListView(
             children: [
               SizedBox(
                 height: width * height / 7000,
               ),
               Center(
                 child: Text(
-                  Localization.of(context).getTranslatedValue("Successful Transaction"),
+                  Localization.of(context)
+                      .getTranslatedValue("Successful Transaction"),
                   style: TextStyle(fontSize: width * height / 15000),
                   textAlign: TextAlign.center,
                 ),
               ),
               Center(
                 child: Text(
-                  Localization.of(context).getTranslatedValue(subTitle)?? subTitle,
+                  Localization.of(context).getTranslatedValue(subTitle) ??
+                      subTitle,
                   style: TextStyle(fontSize: width * height / 15000),
                   textAlign: TextAlign.center,
                 ),
@@ -74,21 +81,25 @@ build(context) {
                 endIndent: 20,
                 height: width * height / 5000,
               ),
-              Column(children:pageDetails.entries.map((iteam)=>Padding(
-                padding: EdgeInsets.fromLTRB(
-                    width * height / 7000, 0, width * height / 7000, 0),
-                child: Container(
-                  child: ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(Localization.of(context).getTranslatedValue(iteam.key)),
-                    trailing: Text("${iteam.value}"),
-                  ),
-                  decoration: BoxDecoration(
-                      border:
-                          Border(bottom: BorderSide(color: Colors.black26))),
-                ),
-              ), ).toList())
-              
+              ...pageDetails.entries
+                  .map(
+                    (iteam) => Padding(
+                      padding: EdgeInsets.fromLTRB(
+                          width * height / 7000, 0, width * height / 7000, 0),
+                      child: Container(
+                        child: ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(Localization.of(context)
+                              .getTranslatedValue(iteam.key)),
+                          trailing: Text("${iteam.value}"),
+                        ),
+                        decoration: BoxDecoration(
+                            border: Border(
+                                bottom: BorderSide(color: Colors.black26))),
+                      ),
+                    ),
+                  )
+                  .toList()
             ],
           ),
         ],
@@ -96,4 +107,3 @@ build(context) {
     );
   }
 }
-

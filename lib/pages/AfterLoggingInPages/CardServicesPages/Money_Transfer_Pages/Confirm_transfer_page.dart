@@ -3,20 +3,25 @@ import 'package:ZoalPay/Widgets/Loading_widget.dart';
 import 'package:ZoalPay/Widgets/Submit_Button.dart';
 import 'package:ZoalPay/lang/Localization.dart';
 import 'package:ZoalPay/models/card_model.dart';
+import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Scan_&_Pay_Page.dart';
 import 'package:ZoalPay/pages/AfterLoggingInPages/ReceiptPages/Transaction_Receipt.dart';
+import 'package:ZoalPay/provider/api_services.dart';
+import 'package:ZoalPay/utils/stringManipulation.dart';
 import 'package:ZoalPay/utils/validators.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class E15 extends StatelessWidget {
-  static final pageName = "E15";
+class ConfirmTransferPage extends StatelessWidget {
+  static final pageName = "ConfirmTransferPage";
   CardModel selectedCard;
-  var _cardNameController = TextEditingController();
-  var _invoiceNumberController = TextEditingController();
-  var _phoneNumberController = TextEditingController();
+  var _senderCardNameController = TextEditingController();
   var _amountController = TextEditingController();
   var _commentController = TextEditingController();
   var _ipinController = TextEditingController();
+  Map<String, String> cardDetails;
+
+  ConfirmTransferPage({this.cardDetails});
 
   build(context) {
     var width = MediaQuery.of(context).size.width;
@@ -25,15 +30,52 @@ class E15 extends StatelessWidget {
       drawer: CustomDrawer(),
       appBar: AppBar(
         title: Text(
-          Localization.of(context).getTranslatedValue("E15"),
+          Localization.of(context).getTranslatedValue("Transfer Card to Card"),
         ),
       ),
       body: ListView(
         children: [
-          //first field text
           SizedBox(
             height: height / 40,
           ),
+          Divider(
+            color: Colors.black,
+            indent: 10,
+            endIndent: 20,
+            height: width * height / 5000,
+          ),
+          // card details
+          ListView(
+              children: cardDetails.entries
+                  .map(
+                    (iteam) => Padding(
+                      padding: EdgeInsets.fromLTRB(
+                          width * height / 7000, 0, width * height / 7000, 0),
+                      child: Container(
+                        child: ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(Localization.of(context)
+                              .getTranslatedValue(iteam.key)),
+                          trailing: Text("${iteam.value}"),
+                        ),
+                        decoration: BoxDecoration(
+                            border: Border(
+                                bottom: BorderSide(color: Colors.black26))),
+                      ),
+                    ),
+                  )
+                  .toList()),
+          //
+          Divider(
+            color: Colors.black,
+            indent: 10,
+            endIndent: 20,
+            height: width * height / 5000,
+          ),
+          SizedBox(
+            height: height / 40,
+          ),
+          //first field text
           Row(
             children: [
               SizedBox(
@@ -42,7 +84,11 @@ class E15 extends StatelessWidget {
               SizedBox(
                 width: width - (width / 15),
                 child: TextField(
-                  controller: _cardNameController,
+                  controller: _senderCardNameController,
+                  onChanged: (value) {
+                    _senderCardNameController.text =
+                        selectedCard.cardUserName ?? "";
+                  },
                   style: TextStyle(
                     fontWeight: FontWeight.w300,
                   ),
@@ -59,7 +105,7 @@ class E15 extends StatelessWidget {
                                   .toList(),
                           onSelected: (value) {
                             selectedCard = value;
-                            _cardNameController.text =
+                            _senderCardNameController.text =
                                 selectedCard.cardUserName;
                             print("${value.cardNumber}");
                           },
@@ -77,50 +123,9 @@ class E15 extends StatelessWidget {
               SizedBox(
                 width: width / 15,
               ),
-              SizedBox(
-                width: width - (width / 15),
-                child: TextField(
-                  controller: _invoiceNumberController,
-                  onChanged: (string) {},
-                  onSubmitted: (string) {},
-                  style: TextStyle(
-                    fontWeight: FontWeight.w300,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: Localization.of(context)
-                        .getTranslatedValue("Invoice Number"),
-                  ),
-                ),
-              ),
             ],
           ),
           //third field text
-          SizedBox(
-            height: height / 40,
-          ),
-          Row(
-            children: [
-              SizedBox(
-                width: width / 15,
-              ),
-              SizedBox(
-                width: width - (width / 15),
-                child: TextField(
-                  controller: _phoneNumberController,
-                  onChanged: (string) {},
-                  onSubmitted: (string) {},
-                  style: TextStyle(
-                    fontWeight: FontWeight.w300,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: Localization.of(context)
-                        .getTranslatedValue("Phone Number"),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          //fourth field text
           SizedBox(
             height: height / 40,
           ),
@@ -146,7 +151,7 @@ class E15 extends StatelessWidget {
               ),
             ],
           ),
-          //fifth field text
+          //fourth field text
           SizedBox(
             height: height / 40,
           ),
@@ -172,7 +177,7 @@ class E15 extends StatelessWidget {
               ),
             ],
           ),
-          //sixth field text
+          //fifth field text
           SizedBox(
             height: height / 40,
           ),
@@ -201,41 +206,56 @@ class E15 extends StatelessWidget {
           SizedBox(
             height: height / 40,
           ),
-          SubmitButton(() {
+          SubmitButton(() async {
+            // validate everything
             if (selectedCard == null) {
               // TODO:notify user to select a card
               print("please select a card");
-              // } else if (!isPhoneNumbervalid(
-              //     _phoneNumberController.text.trim())) {
-              //   //TODO: notify user to enter valid phone number
-              //   print("Please enter a valid phone number ");
               // } else if (!isAmountValid(_amountController.text.trim())) {
-              //   //TODO: notify user to enter a valid amount
-              //   print("amount is not valid");
+              //   print(_amountController.text.trim());
+              //   //TODO: notify user to enter valid amount
+              //   print("Please enter a valid amount ");
               // } else if (!isIpinValid(_ipinController.text.trim())) {
               //   //TODO: notify user to enter a valid IPIN
               //   print("please enter a valid IPIN");
               // } else {
+              // attempt transaction
               try {
                 showLoadingDialog(context);
-                // attempt the api call
-                Navigator.pop(context);
+
+                await context.read<ApiService>().cardTransfer(
+                    selectedCard,
+                    cardDetails["Account No"],
+                    _ipinController.text.trim(),
+                    int.parse(_amountController.text.trim()),
+                    _commentController.text.trim());
+
                 String date = DateFormat.yMd().format(DateTime.now());
-                //TODO: modify next line to put everything you need on the page.
+                Navigator.pop(context);
+                Navigator.pop(context);
                 Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => TransactionReceipt(
-                              subTitle: "E 15",
+                              subTitle: "Transfer Card To Card",
                               transactionValue: _amountController.text.trim(),
                               pageDetails: {
-                                "Card Number": "123123123",
+                                "Card Number":
+                                    concealCardNumber(selectedCard.cardNumber),
                                 "Amount": _amountController.text.trim(),
+                                "To Card": concealCardNumber(
+                                    cardDetails["Account No"]),
                                 "Date": date,
                                 "Comment": _commentController.text.trim()
                               },
                             )));
-              } catch (e) {}
+              } catch (e) {
+                //remove loading screen
+                Navigator.pop(context);
+                //TODO:notify user that somthing went wrong
+                print(e);
+                print("somthing went wrong");
+              }
             }
           })
         ],

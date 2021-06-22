@@ -5,6 +5,11 @@ class PayeeModel {
   static List<PayeeModel> allPayees = [];
   PayeeModel({this.payeeName, this.payeeId, this.id});
 
+  @override
+  String toString() {
+    return '{"payeeName":"$payeeName","payeeId":"$payeeId","id":$id}';
+  }
+
   PayeeModel.fromJson(Map<String, dynamic> json)
       : this.payeeName = json['payeeName'],
         this.payeeId = json["payeeId"],
@@ -28,3 +33,6 @@ PayeeModel mtnBillPaymentPayeeModel = PayeeModel.allPayees
 
 PayeeModel sudaniBillPaymentPayeeModel = PayeeModel.allPayees
     .firstWhere((payee) => payee.payeeName == "SUDANI Bill Payment");
+
+PayeeModel electricityPayeeModel = PayeeModel.allPayees
+    .firstWhere((payee) => payee.payeeName == "National Electricity Corp.");

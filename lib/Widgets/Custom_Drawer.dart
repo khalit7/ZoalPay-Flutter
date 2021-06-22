@@ -1,6 +1,8 @@
 import 'package:ZoalPay/Widgets/Custom_Flat_Button.dart';
 import 'package:ZoalPay/Widgets/Loading_widget.dart';
+import 'package:ZoalPay/Widgets/error_widgets.dart';
 import 'package:ZoalPay/lang/Localization.dart';
+import 'package:ZoalPay/models/card_model.dart';
 import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Drawer_pages/About_Us_page.dart';
 import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Drawer_pages/Card_Balance_Page.dart';
 import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Drawer_pages/Card_Details_Page.dart';
@@ -94,7 +96,12 @@ class CustomDrawer extends StatelessWidget {
             ),
             // Card Deatails
             ListTile(
-              onTap: () {
+              onTap: () async {
+                showLoadingDialog(context);
+                CardModel.allCards =
+                    await Provider.of<ApiService>(context, listen: false)
+                        .getAllCards();
+
                 Navigator.popAndPushNamed(context, CardDetailsPage.pageName);
               },
               leading:
@@ -160,15 +167,21 @@ class CustomDrawer extends StatelessWidget {
             // Transaction History
             ListTile(
               onTap: () async {
-                showLoadingDialog(context);
-                List allTransactions =
-                    await context.read<ApiService>().getTransactionHistory();
-                Navigator.pop(context);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => TransactionHistoryPage(
-                            transactionsList: allTransactions)));
+                try {
+                  showLoadingDialog(context);
+                  List allTransactions =
+                      await context.read<ApiService>().getTransactionHistory();
+                  Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => TransactionHistoryPage(
+                              transactionsList: allTransactions)));
+                } catch (e) {
+                  Navigator.pop(context);
+                  showErrorWidget(
+                      context, "somthing went wrong, please try again later");
+                }
               },
               leading:
                   Icon(Icons.history_toggle_off_sharp, color: Colors.white),
@@ -221,6 +234,7 @@ class CustomDrawer extends StatelessWidget {
             // Log Out
             ListTile(
               onTap: () {
+                context.read<ApiService>().logOut();
                 Navigator.pop(context);
                 Navigator.pop(context);
                 Navigator.pop(context);

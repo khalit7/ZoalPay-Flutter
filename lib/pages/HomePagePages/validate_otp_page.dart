@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:ZoalPay/Widgets/Loading_widget.dart';
 import 'package:ZoalPay/Widgets/Submit_Button.dart';
+import 'package:ZoalPay/Widgets/error_widgets.dart';
 import 'package:ZoalPay/models/card_model.dart';
 import 'package:ZoalPay/models/payee_model.dart';
 import 'package:ZoalPay/provider/api_services.dart';
@@ -10,6 +13,7 @@ import 'package:ZoalPay/utils/constants.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 import 'package:sms_autofill/sms_autofill.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +33,7 @@ class ValidateOtpPage extends StatefulWidget {
 }
 
 class _ValidateOtpPageState extends State<ValidateOtpPage> with CodeAutoFill {
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   final _otpController = TextEditingController();
   String appSignature;
 
@@ -99,18 +104,32 @@ class _ValidateOtpPageState extends State<ValidateOtpPage> with CodeAutoFill {
                       try {
                         showLoadingDialog(context);
 
-                        // await Provider.of<ApiService>(context, listen: false)
-                        //     .validateOtp(
-                        //         widget.phoneNumber, _otpController.text);
+                        await Provider.of<ApiService>(context, listen: false)
+                            .validateOtp(
+                                widget.phoneNumber, _otpController.text);
                         // if isverfied load all cards first ... then ... redirect to card services page
                         CardModel.allCards = await Provider.of<ApiService>(
                                 context,
                                 listen: false)
                             .getAllCards();
 
-                        // fetch payee list
-                        // PayeeModel.allPayees =
-                        //     await context.read<ApiService>().getPayeeList();
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+
+                        String payeesString = prefs.getString("Payees");
+
+                        if (payeesString == null) {
+                          // fetch payee list
+                          PayeeModel.allPayees =
+                              await context.read<ApiService>().getPayeeList();
+                          prefs.setString(
+                              'Payees', PayeeModel.allPayees.toString());
+                        } else {
+                          List payeeListMap = jsonDecode(payeesString);
+                          PayeeModel.allPayees = payeeListMap
+                              .map((json) => PayeeModel.fromJson(json))
+                              .toList();
+                        }
 
                         Navigator.pop(context);
 
@@ -123,7 +142,12 @@ class _ValidateOtpPageState extends State<ValidateOtpPage> with CodeAutoFill {
                         // stop loading screen
                         Navigator.pop(context);
                         //TODO:Notify user that the otp code entered is wrong
-                        print(e.toString());
+                        showErrorWidget(context, "Wrong OTP, please try again");
+                      } catch (e) {
+                        //TODO: somthing went wrong
+                        Navigator.pop(context);
+                        showErrorWidget(context,
+                            "Somthing went wrong, please try again later");
                       }
                     },
                     onChanged: (code) {},

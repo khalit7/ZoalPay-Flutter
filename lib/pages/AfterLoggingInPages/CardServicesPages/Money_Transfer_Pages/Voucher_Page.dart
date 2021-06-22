@@ -11,13 +11,25 @@ import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class VoucherPage extends StatelessWidget {
+class VoucherPage extends StatefulWidget {
   static final pageName = "VoucherPage";
+
+  @override
+  _VoucherPageState createState() => _VoucherPageState();
+}
+
+class _VoucherPageState extends State<VoucherPage> {
   CardModel selectedCard;
+
   var _cardNameController = TextEditingController();
+
   var _phoneNumberController = TextEditingController();
+
   var _amountController = TextEditingController();
+
   var _ipinController = TextEditingController();
+
+  bool _validate = false;
 
   build(context) {
     var width = MediaQuery.of(context).size.width;
@@ -48,6 +60,8 @@ class VoucherPage extends StatelessWidget {
                     fontWeight: FontWeight.w300,
                   ),
                   decoration: InputDecoration(
+                      errorText:
+                          selectedCard == null ? "Please select a card" : null,
                       labelText: Localization.of(context)
                           .getTranslatedValue("Card Number"),
                       suffixIcon: PopupMenuButton<CardModel>(
@@ -84,10 +98,15 @@ class VoucherPage extends StatelessWidget {
                   controller: _phoneNumberController,
                   onChanged: (string) {},
                   onSubmitted: (string) {},
+                  keyboardType: TextInputType.number,
                   style: TextStyle(
                     fontWeight: FontWeight.w300,
                   ),
                   decoration: InputDecoration(
+                    errorText: _validate
+                        ? phoneNumbervalidError(
+                            _phoneNumberController.text.trim())
+                        : null,
                     labelText: Localization.of(context)
                         .getTranslatedValue("Phone Number"),
                   ),
@@ -108,12 +127,20 @@ class VoucherPage extends StatelessWidget {
                 width: width - (width / 15),
                 child: TextField(
                   controller: _amountController,
-                  onChanged: (string) {},
+                  onChanged: (string) {
+                    setState(() {
+                      _validate = true;
+                    });
+                  },
                   onSubmitted: (string) {},
                   style: TextStyle(
                     fontWeight: FontWeight.w300,
                   ),
+                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
+                    errorText: _validate
+                        ? amountValidError(_amountController.text.trim())
+                        : null,
                     labelText:
                         Localization.of(context).getTranslatedValue("Amount"),
                   ),
@@ -139,7 +166,11 @@ class VoucherPage extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.w300,
                   ),
+                  obscureText: true,
                   decoration: InputDecoration(
+                    errorText: _validate
+                        ? iPinValidError(_ipinController.text.trim())
+                        : null,
                     labelText:
                         Localization.of(context).getTranslatedValue("IPIN"),
                   ),
@@ -151,17 +182,12 @@ class VoucherPage extends StatelessWidget {
             height: height / 40,
           ),
           SubmitButton(() async {
+            setState(() {
+              _validate = true;
+            });
             if (selectedCard == null) {
               // TODO:notify user to select a card
               print("please select a card");
-            } else if (!isPhoneNumbervalid(
-                _phoneNumberController.text.trim())) {
-              //TODO: notify user to select a valid phone number
-              print("please enter a valid phone number");
-            } else if (!isAmountValid(_amountController.text.trim())) {
-              print(_amountController.text.trim());
-              //TODO: notify user to enter valid amount
-              print("Please enter a valid amount ");
             } else if (!isIpinValid(_ipinController.text.trim())) {
               //TODO: notify user to enter a valid IPIN
               print("please enter a valid IPIN");

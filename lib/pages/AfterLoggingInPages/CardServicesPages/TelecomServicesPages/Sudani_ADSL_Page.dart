@@ -1,27 +1,48 @@
 import 'package:ZoalPay/Widgets/Custom_Drawer.dart';
 import 'package:ZoalPay/Widgets/Loading_widget.dart';
 import 'package:ZoalPay/Widgets/Submit_Button.dart';
+import 'package:ZoalPay/Widgets/error_widgets.dart';
 import 'package:ZoalPay/lang/Localization.dart';
 import 'package:ZoalPay/models/card_model.dart';
 import 'package:ZoalPay/models/payee_model.dart';
 import 'package:ZoalPay/pages/AfterLoggingInPages/ReceiptPages/Transaction_Receipt.dart';
 import 'package:ZoalPay/provider/api_services.dart';
+import 'package:ZoalPay/utils/stringManipulation.dart';
+import 'package:date_time_picker/date_time_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:ZoalPay/utils/validators.dart';
+import 'package:ZoalPay/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:ZoalPay/models/api_exception_model.dart' as ApiExceptions;
 
-class SudaniAdSlPage extends StatelessWidget {
+class SudaniAdSlPage extends StatefulWidget {
   static final pageName = "SudaniAdSlPage";
+
+  @override
+  _SudaniAdSlPageState createState() => _SudaniAdSlPageState();
+}
+
+class _SudaniAdSlPageState extends State<SudaniAdSlPage> {
   CardModel selectedCardTab1;
+
   CardModel selectedCardTab2;
+
   var _cardNameControllerTab2 = TextEditingController();
+
   var _phoneNumberControllerTab2 = TextEditingController();
+
   var _amountController = TextEditingController();
+
   var _ipinControllerTab1 = TextEditingController();
+
   var _cardNameControllerTab1 = TextEditingController();
+
   var _phoneNumberControllerTab1 = TextEditingController();
+
   var _ipinControllerTab2 = TextEditingController();
-//TODO:second tab
+
+  bool _validate = false;
+
   build(context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
@@ -82,6 +103,9 @@ class SudaniAdSlPage extends StatelessWidget {
                                   fontWeight: FontWeight.w300,
                                 ),
                                 decoration: InputDecoration(
+                                    errorText: selectedCardTab1 == null
+                                        ? "Please select a card"
+                                        : null,
                                     labelText: Localization.of(context)
                                         .getTranslatedValue("Card Number"),
                                     suffixIcon: PopupMenuButton<CardModel>(
@@ -122,7 +146,13 @@ class SudaniAdSlPage extends StatelessWidget {
                                 style: TextStyle(
                                   fontWeight: FontWeight.w300,
                                 ),
+                                keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
+                                  errorText: _validate
+                                      ? phoneNumbervalidError(
+                                          _phoneNumberControllerTab1.text
+                                              .trim())
+                                      : null,
                                   labelText: Localization.of(context)
                                       .getTranslatedValue("Phone Number"),
                                 ),
@@ -146,7 +176,12 @@ class SudaniAdSlPage extends StatelessWidget {
                                 style: TextStyle(
                                   fontWeight: FontWeight.w300,
                                 ),
+                                obscureText: true,
                                 decoration: InputDecoration(
+                                  errorText: _validate
+                                      ? iPinValidError(
+                                          _ipinControllerTab1.text.trim())
+                                      : null,
                                   labelText: Localization.of(context)
                                       .getTranslatedValue("IPIN"),
                                 ),
@@ -158,27 +193,41 @@ class SudaniAdSlPage extends StatelessWidget {
                           height: height / 40,
                         ),
                         SubmitButton(() async {
-                          if (selectedCardTab1 == null) {
-                            // TODO:notify user to select a card
-                            print("please select a card");
-                          } else if (!isPhoneNumbervalid(
-                              _phoneNumberControllerTab1.text.trim())) {
-                            //TODO: notify user to enter valid phone number
-                            print("Please enter a valid phone number ");
-                          } else if (!isIpinValid(
-                              _ipinControllerTab1.text.trim())) {
-                            //TODO: notify user to enter a valid IPIN
-                            print("please enter a valid IPIN");
-                          } else {
+                          setState(() {
+                            _validate = true;
+                          });
+                          // validate everything
+                          if (selectedCardTab1 != null ||
+                              isPhoneNumbervalid(
+                                  _phoneNumberControllerTab1.text.trim()) ||
+                              isIpinValid(_ipinControllerTab1.text.trim())) {
                             // attempt bill inquiry
                             try {
+                              showLoadingDialog(context);
                               await context.read<ApiService>().getBill(
                                   selectedCardTab1,
                                   _phoneNumberControllerTab1.text.trim(),
                                   _ipinControllerTab1.text.trim(),
                                   sudaniBillPaymentPayeeModel);
+                              // pop loading page
+                              // go to recipt page
+                              Navigator.pop(context);
+                            } on ApiExceptions.InvalidIpin catch (e) {
+                              Navigator.pop(context);
+                              showErrorWidget(
+                                  context, "Wrong IPIN, please try again");
+                            } on ApiExceptions.PinTriesLimitExceeded catch (e) {
+                              Navigator.pop(context);
+                              showErrorWidget(context,
+                                  "PIN tries limit exceeded, please try again later");
                             } catch (e) {
-                              // handle error
+                              // remmber to handle the case where a wrong IPIN is entered
+                              //remove loading screen
+                              Navigator.pop(context);
+                              showErrorWidget(
+                                  context, "Please try again later");
+                              print(e);
+                              print("somthing went wrong");
                             }
                           }
                         })
@@ -208,6 +257,9 @@ class SudaniAdSlPage extends StatelessWidget {
                                   fontWeight: FontWeight.w300,
                                 ),
                                 decoration: InputDecoration(
+                                    errorText: selectedCardTab2 == null
+                                        ? "Please select a card"
+                                        : null,
                                     labelText: Localization.of(context)
                                         .getTranslatedValue("Card Number"),
                                     suffixIcon: PopupMenuButton<CardModel>(
@@ -247,7 +299,13 @@ class SudaniAdSlPage extends StatelessWidget {
                                 style: TextStyle(
                                   fontWeight: FontWeight.w300,
                                 ),
+                                keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
+                                  errorText: _validate
+                                      ? phoneNumbervalidError(
+                                          _phoneNumberControllerTab2.text
+                                              .trim())
+                                      : null,
                                   labelText: Localization.of(context)
                                       .getTranslatedValue("Phone Number"),
                                 ),
@@ -273,7 +331,12 @@ class SudaniAdSlPage extends StatelessWidget {
                                 style: TextStyle(
                                   fontWeight: FontWeight.w300,
                                 ),
+                                keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
+                                  errorText: _validate
+                                      ? amountValidError(
+                                          _amountController.text.trim())
+                                      : null,
                                   labelText: Localization.of(context)
                                       .getTranslatedValue("Amount"),
                                 ),
@@ -299,7 +362,13 @@ class SudaniAdSlPage extends StatelessWidget {
                                 style: TextStyle(
                                   fontWeight: FontWeight.w300,
                                 ),
+                                obscureText: true,
+                                keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
+                                  errorText: _validate
+                                      ? iPinValidError(
+                                          _ipinControllerTab2.text.trim())
+                                      : null,
                                   labelText: Localization.of(context)
                                       .getTranslatedValue("IPIN"),
                                 ),
@@ -311,36 +380,29 @@ class SudaniAdSlPage extends StatelessWidget {
                           height: height / 40,
                         ),
                         SubmitButton(() async {
-                          if (selectedCardTab2 == null) {
-                            // TODO:notify user to select a card
-                            print("please select a card");
-                          } else if (!isPhoneNumbervalid(
-                              _phoneNumberControllerTab2.text.trim())) {
-                            //TODO: notify user to enter valid phone number
-                            print("Please enter a valid phone number ");
-                          } else if (!isAmountValid(
-                              _amountController.text.trim())) {
-                            //TODO: notify user to enter a valid amount
-                            print("Please enter a valid amount ");
-                          } else if (!isIpinValid(
-                              _ipinControllerTab2.text.trim())) {
-                            //TODO: notify user to enter a valid IPIN
-                            print("please enter a valid IPIN");
-                          } else {
+                          // validate everything
+                          setState(() {
+                            _validate = true;
+                          });
+                          if (selectedCardTab2 != null ||
+                              isPhoneNumbervalid(
+                                  _phoneNumberControllerTab2.text.trim()) ||
+                              isAmountValid(_amountController.text.trim()) ||
+                              isIpinValid(_ipinControllerTab2.text.trim())) {
                             try {
                               showLoadingDialog(context);
-                              String cardNum = await context
-                                  .read<ApiService>()
-                                  .payBill(
-                                      selectedCardTab2,
-                                      _ipinControllerTab2.text.trim(),
-                                      int.parse(_amountController.text.trim()),
-                                      sudaniBillPaymentPayeeModel,
-                                      _phoneNumberControllerTab2.text.trim(),
-                                      ""); // make sure that there is no comment interface in this page
-                              String date = DateTime.now().toString().substring(
-                                  0,
-                                  19); // this is to formate date time from UTZ to yy-mm-dd-hh-m-ss
+                              await context.read<ApiService>().payBill(
+                                  selectedCardTab2,
+                                  _ipinControllerTab2.text.trim(),
+                                  int.parse(_amountController.text.trim()),
+                                  sudaniBillPaymentPayeeModel,
+                                  _phoneNumberControllerTab2.text.trim(),
+                                  "",
+                                  paymentType
+                                      .phoneBill); // make sure that there is no comment interface in this page
+                              String date =
+                                  DateFormat.yMd().format(DateTime.now());
+                              // pop loading screen
                               Navigator.pop(context);
                               Navigator.push(
                                   context,
@@ -351,7 +413,8 @@ class SudaniAdSlPage extends StatelessWidget {
                                             transactionValue:
                                                 _amountController.text.trim(),
                                             pageDetails: {
-                                              "Card Number": cardNum,
+                                              "Card Number": concealCardNumber(
+                                                  selectedCardTab2.cardNumber),
                                               "Amount":
                                                   _amountController.text.trim(),
                                               "Phone Number":
@@ -361,9 +424,22 @@ class SudaniAdSlPage extends StatelessWidget {
                                               "Date": date,
                                             },
                                           )));
-                            } catch (e) {
+                            } on ApiExceptions.InvalidIpin catch (e) {
                               Navigator.pop(context);
-                              // handle error
+                              showErrorWidget(
+                                  context, "Wrong IPIN, please try again");
+                            } on ApiExceptions.PinTriesLimitExceeded catch (e) {
+                              Navigator.pop(context);
+                              showErrorWidget(context,
+                                  "PIN tries limit exceeded, please try again later");
+                            } catch (e) {
+                              // remmber to handle the case where a wrong IPIN is entered
+                              //remove loading screen
+                              Navigator.pop(context);
+                              showErrorWidget(
+                                  context, "Please try again later");
+                              print(e);
+                              print("somthing went wrong");
                             }
                           }
                         })

@@ -1,22 +1,40 @@
 import 'dart:convert';
 
+import 'package:ZoalPay/models/ebs_response_model.dart';
 import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Money_Transfer_Pages/Voucher_Page.dart';
+
+enum transactionTypeEnum {
+  telecomService,
+  electricityService,
+  cardTransfer,
+  generateVoucher,
+  balanceInquiry,
+  unKnown,
+}
 
 class TransactionModel {
   String pan;
   DateTime date;
   String responseMessage;
   num transactionAmount;
-  String phoneNumber;
+  String number; // phone number or meter number
   String comment;
   bool isSuccessful;
   String type;
   String reciverCard;
   String voucherCode;
+  String customerName;
+  String token;
+  String unitsInKWh;
+  String meterNumber;
+  String waterFees;
+  bool isCashIn;
+  transactionTypeEnum tranTypeEnum;
 
   static List<TransactionModel> allTransactions = [];
 
-  TransactionModel.fromJson(Map<String, dynamic> json)
+  TransactionModel.fromJson(
+      Map<String, dynamic> json, EbsResponseModel ebsResbonse)
       : this.pan = json['pan'],
         this.date = _formatDate(json["tranDateTime"]),
         this.responseMessage = json["responseMessage"],
@@ -24,28 +42,50 @@ class TransactionModel {
         this.transactionAmount = json["responseStatus"] == "Successful"
             ? json["tranAmount"] != null
                 ? json["tranAmount"]
-                : jsonDecode(json["ebsResponse"])["balance"]["available"]
+                : ebsResbonse.balance
             : null,
         this.comment = json["comment"],
-        this.phoneNumber = json["ebsResponse"] == null
+        this.number = ebsResbonse?.paymentInfo == null
             ? null
-            : jsonDecode(json["ebsResponse"])["paymentInfo"]
-                ?.substring(7), // change this to the actual json location.
-        this.type = json["type"],
+            : ebsResbonse.paymentInfo.toString().split("=")[1],
+        this.type = json["type"].toString().split(" ").sublist(1).join(),
         this.voucherCode = json["responseStatus"] == "Successful"
-            ? jsonDecode(json["ebsResponse"])["voucherCode"]
+            ? ebsResbonse?.voucherCode
             : null,
         this.reciverCard = json["responseStatus"] == "Successful"
-            ? jsonDecode(json["ebsResponse"])["toCard"]
-            : null;
-}
+            ? ebsResbonse?.reciverCard
+            : null,
+        this.customerName = ebsResbonse?.customerName,
+        this.token = ebsResbonse?.token,
+        this.unitsInKWh = ebsResbonse?.unitsInKWh,
+        this.meterNumber = ebsResbonse?.meterNumber,
+        this.waterFees = ebsResbonse?.waterFees;
 
-// class ConsumerTransacionModel extends TransactionModel {
-//   String type;
-//   ConsumerTransacionModel(Map<String, dynamic> json) : super.fromJson(json) {
-//     this.type = json["type"].substring(9);
-//   }
-// }
+  TransactionModel() {
+    switch (this.type) {
+      case "payment-MTNTopUp":
+      case "payment-ZainTopUp":
+      case "payment-SudaniTopUp":
+        tranTypeEnum = transactionTypeEnum.telecomService;
+        break;
+      case "payment-NationalElectricityCorp.":
+        tranTypeEnum = transactionTypeEnum.electricityService;
+        break;
+      case "doCardTransfer":
+        tranTypeEnum = transactionTypeEnum.cardTransfer;
+        break;
+      case "balanceInquiry":
+        tranTypeEnum = transactionTypeEnum.balanceInquiry;
+        break;
+      case "generateVoucher":
+        tranTypeEnum = transactionTypeEnum.generateVoucher;
+        break;
+      default:
+        tranTypeEnum = transactionTypeEnum.unKnown;
+        break;
+    }
+  }
+}
 
 DateTime _formatDate(String dateString) {
   int year = int.parse(dateString.substring(4, 6));

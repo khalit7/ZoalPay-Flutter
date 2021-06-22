@@ -1,32 +1,60 @@
 import 'package:ZoalPay/Widgets/Custom_Drawer.dart';
 import 'package:ZoalPay/Widgets/Loading_widget.dart';
 import 'package:ZoalPay/Widgets/Submit_Button.dart';
+import 'package:ZoalPay/Widgets/error_widgets.dart';
 import 'package:ZoalPay/lang/Localization.dart';
 import 'package:ZoalPay/models/card_model.dart';
 import 'package:ZoalPay/models/payee_model.dart';
 import 'package:ZoalPay/pages/AfterLoggingInPages/ReceiptPages/Transaction_Receipt.dart';
 import 'package:ZoalPay/provider/api_services.dart';
+import 'package:ZoalPay/utils/constants.dart';
+import 'package:ZoalPay/utils/stringManipulation.dart';
+import 'package:date_time_picker/date_time_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:ZoalPay/utils/validators.dart';
 import 'package:flutter/material.dart';
+import 'package:ZoalPay/models/api_exception_model.dart' as ApiExceptions;
 
-class BillPaymentPage extends StatelessWidget {
+class BillPaymentPage extends StatefulWidget {
   static final pageName = "BillPaymentPage";
+
+  @override
+  _BillPaymentPageState createState() => _BillPaymentPageState();
+}
+
+class _BillPaymentPageState extends State<BillPaymentPage> {
   CardModel selectedCardTab1;
+
   CardModel selectedCardTab2;
+
   PayeeModel selectedOperatorTab1;
+
   PayeeModel selectedOperatorTab2;
+
   var _cardNameControllerTab1 = TextEditingController();
+
   var _operatorControllerTab1 = TextEditingController();
+
   var _phoneNumberControllertab1 = TextEditingController();
+
   var _commentControllerTab1 = TextEditingController();
+
   var _ipinControllerTab1 = TextEditingController();
+
   var _cardNameControllerTab2 = TextEditingController();
+
   var _operatorControllerTab2 = TextEditingController();
+
   var _phoneNumberControllertab2 = TextEditingController();
+
   var _amountControllerTab2 = TextEditingController();
+
   var _commentControllerTab2 = TextEditingController();
+
   var _ipinControllerTab2 = TextEditingController();
+
+  bool _validate = false;
+
   build(context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
@@ -83,10 +111,14 @@ class BillPaymentPage extends StatelessWidget {
                                 _cardNameControllerTab1.text =
                                     selectedCardTab1.cardUserName ?? "";
                               },
+                              keyboardType: TextInputType.number,
                               style: TextStyle(
                                 fontWeight: FontWeight.w300,
                               ),
                               decoration: InputDecoration(
+                                  errorText: selectedCardTab1 == null
+                                      ? "Please select a card"
+                                      : null,
                                   labelText: Localization.of(context)
                                       .getTranslatedValue("Card Number"),
                                   suffixIcon: PopupMenuButton<CardModel>(
@@ -131,6 +163,9 @@ class BillPaymentPage extends StatelessWidget {
                                 fontWeight: FontWeight.w300,
                               ),
                               decoration: InputDecoration(
+                                  errorText: selectedOperatorTab1 == null
+                                      ? "Please choose an operator"
+                                      : null,
                                   labelText: Localization.of(context)
                                       .getTranslatedValue("operator"),
                                   suffixIcon: PopupMenuButton<PayeeModel>(
@@ -183,7 +218,12 @@ class BillPaymentPage extends StatelessWidget {
                               style: TextStyle(
                                 fontWeight: FontWeight.w300,
                               ),
+                              keyboardType: TextInputType.number,
                               decoration: InputDecoration(
+                                errorText: _validate
+                                    ? phoneNumbervalidError(
+                                        _phoneNumberControllertab1.text.trim())
+                                    : null,
                                 labelText: Localization.of(context)
                                     .getTranslatedValue("Phone Number"),
                               ),
@@ -235,7 +275,13 @@ class BillPaymentPage extends StatelessWidget {
                               style: TextStyle(
                                 fontWeight: FontWeight.w300,
                               ),
+                              obscureText: true,
+                              keyboardType: TextInputType.number,
                               decoration: InputDecoration(
+                                errorText: _validate
+                                    ? iPinValidError(
+                                        _ipinControllerTab1.text.trim())
+                                    : null,
                                 labelText: Localization.of(context)
                                     .getTranslatedValue("IPIN"),
                               ),
@@ -247,22 +293,16 @@ class BillPaymentPage extends StatelessWidget {
                         height: height / 40,
                       ),
                       SubmitButton(() async {
+                        setState(() {
+                          _validate = true;
+                        });
                         // validate everything
-                        if (selectedCardTab1 == null) {
-                          // TODO:notify user to select a card
-                          print("please select a card");
-                        } else if (selectedOperatorTab1 == null) {
-                          //TODO: notify user to selec operator
-                          print("please select an operator");
-                        } else if (!isPhoneNumbervalid(
-                            _phoneNumberControllertab1.text.trim())) {
-                          //TODO: notify user to enter valid phone number
-                          print("Please enter a valid phone number ");
-                        } else if (!isIpinValid(
-                            _ipinControllerTab1.text.trim())) {
-                          //TODO: notify user to enter a valid IPIN
-                          print("please enter a valid IPIN");
-                        } else {
+
+                        if (selectedCardTab1 != null ||
+                            selectedOperatorTab1 != null ||
+                            isPhoneNumbervalid(
+                                _phoneNumberControllertab1.text.trim()) ||
+                            isIpinValid(_ipinControllerTab1.text.trim())) {
                           // attempt bill inquiry
                           try {
                             await context.read<ApiService>().getBill(
@@ -270,8 +310,21 @@ class BillPaymentPage extends StatelessWidget {
                                 _phoneNumberControllertab1.text.trim(),
                                 _ipinControllerTab1.text.trim(),
                                 selectedOperatorTab1);
+                          } on ApiExceptions.InvalidIpin catch (e) {
+                            Navigator.pop(context);
+                            showErrorWidget(
+                                context, "Wrong IPIN, please try again");
+                          } on ApiExceptions.PinTriesLimitExceeded catch (e) {
+                            Navigator.pop(context);
+                            showErrorWidget(context,
+                                "PIN tries limit exceeded, please try again later");
                           } catch (e) {
-                            // handle error
+                            // remmber to handle the case where a wrong IPIN is entered
+                            //remove loading screen
+                            Navigator.pop(context);
+                            showErrorWidget(context, "Please try again later");
+                            print(e);
+                            print("somthing went wrong");
                           }
                         }
                       })
@@ -301,6 +354,9 @@ class BillPaymentPage extends StatelessWidget {
                                 fontWeight: FontWeight.w300,
                               ),
                               decoration: InputDecoration(
+                                  errorText: selectedCardTab2 == null
+                                      ? "Please select a card"
+                                      : null,
                                   labelText: Localization.of(context)
                                       .getTranslatedValue("Card Number"),
                                   suffixIcon: PopupMenuButton<CardModel>(
@@ -345,6 +401,9 @@ class BillPaymentPage extends StatelessWidget {
                                 fontWeight: FontWeight.w300,
                               ),
                               decoration: InputDecoration(
+                                  errorText: selectedOperatorTab2 == null
+                                      ? "Please choose an operator"
+                                      : null,
                                   labelText: Localization.of(context)
                                       .getTranslatedValue("operator"),
                                   suffixIcon: PopupMenuButton<PayeeModel>(
@@ -397,7 +456,12 @@ class BillPaymentPage extends StatelessWidget {
                               style: TextStyle(
                                 fontWeight: FontWeight.w300,
                               ),
+                              keyboardType: TextInputType.number,
                               decoration: InputDecoration(
+                                errorText: _validate
+                                    ? phoneNumbervalidError(
+                                        _phoneNumberControllertab2.text.trim())
+                                    : null,
                                 labelText: Localization.of(context)
                                     .getTranslatedValue("Phone Number"),
                               ),
@@ -423,7 +487,12 @@ class BillPaymentPage extends StatelessWidget {
                               style: TextStyle(
                                 fontWeight: FontWeight.w300,
                               ),
+                              keyboardType: TextInputType.number,
                               decoration: InputDecoration(
+                                errorText: _validate
+                                    ? amountValidError(
+                                        _amountControllerTab2.text.trim())
+                                    : null,
                                 labelText: Localization.of(context)
                                     .getTranslatedValue("Amount"),
                               ),
@@ -475,7 +544,12 @@ class BillPaymentPage extends StatelessWidget {
                               style: TextStyle(
                                 fontWeight: FontWeight.w300,
                               ),
+                              obscureText: true,
                               decoration: InputDecoration(
+                                errorText: _validate
+                                    ? iPinValidError(
+                                        _ipinControllerTab2.text.trim())
+                                    : null,
                                 labelText: Localization.of(context)
                                     .getTranslatedValue("IPIN"),
                               ),
@@ -487,45 +561,33 @@ class BillPaymentPage extends StatelessWidget {
                         height: height / 40,
                       ),
                       SubmitButton(() async {
+                        setState(() {
+                          _validate = true;
+                        });
                         // validate everything
-                        if (selectedCardTab2 == null) {
-                          // TODO:notify user to select a card
-                          print("please select a card");
-                        } else if (selectedOperatorTab2 == null) {
-                          //TODO: notify user to selec operator
-                          print("please select an operator");
-                        } else if (!isPhoneNumbervalid(
-                            _phoneNumberControllertab2.text.trim())) {
-                          //TODO: notify user to enter valid phone number
-                          print("Please enter a valid phone number ");
-                        } else if (!isAmountValid(
-                            _amountControllerTab2.text.trim())) {
-                          print(_amountControllerTab2.text.trim());
-                          //TODO: notify user to enter valid amount
-                          print("Please enter a valid amount ");
-                          print(
-                              isAmountValid(_amountControllerTab2.text.trim()));
-                        } else if (!isIpinValid(
-                            _ipinControllerTab2.text.trim())) {
-                          //TODO: notify user to enter a valid IPIN
-                          print("please enter a valid IPIN");
-                        } else {
+
+                        if (selectedCardTab2 != null ||
+                            selectedOperatorTab2 != null ||
+                            isPhoneNumbervalid(
+                                _phoneNumberControllertab2.text.trim()) ||
+                            isAmountValid(_amountControllerTab2.text.trim()) ||
+                            isIpinValid(_ipinControllerTab2.text.trim())) {
                           // attempt bill payment transaction:
                           try {
                             showLoadingDialog(context);
-                            String cardNum = await context
-                                .read<ApiService>()
-                                .payBill(
-                                    selectedCardTab2,
-                                    _ipinControllerTab2.text.trim(),
-                                    int.parse(
-                                        _amountControllerTab2.text.trim()),
-                                    selectedOperatorTab2,
-                                    _phoneNumberControllertab2.text.trim(),
-                                    _commentControllerTab2.text.trim());
-                            String date = DateTime.now().toString().substring(0,
-                                19); // this is to formate date time from UTZ to yy-mm-dd-hh-m-ss
+                            await context.read<ApiService>().payBill(
+                                selectedCardTab2,
+                                _ipinControllerTab2.text.trim(),
+                                int.parse(_amountControllerTab2.text.trim()),
+                                selectedOperatorTab2,
+                                _phoneNumberControllertab2.text.trim(),
+                                _commentControllerTab2.text.trim(),
+                                paymentType.phoneBill);
+                            String date =
+                                DateFormat.yMd().format(DateTime.now());
+                            // pop loading page
                             Navigator.pop(context);
+                            // push recipt
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -534,7 +596,9 @@ class BillPaymentPage extends StatelessWidget {
                                           transactionValue:
                                               _amountControllerTab2.text.trim(),
                                           pageDetails: {
-                                            "Card Number": cardNum,
+                                            "Card Number": concealCardNumber(
+                                                _cardNameControllerTab2.text
+                                                    .trim()),
                                             "Amount": _amountControllerTab2.text
                                                 .trim(),
                                             "Phone Number":
@@ -543,9 +607,21 @@ class BillPaymentPage extends StatelessWidget {
                                             "Date": date,
                                           },
                                         )));
-                          } catch (e) {
+                          } on ApiExceptions.InvalidIpin catch (e) {
                             Navigator.pop(context);
-                            // handle error
+                            showErrorWidget(
+                                context, "Wrong IPIN, please try again");
+                          } on ApiExceptions.PinTriesLimitExceeded catch (e) {
+                            Navigator.pop(context);
+                            showErrorWidget(context,
+                                "PIN tries limit exceeded, please try again later");
+                          } catch (e) {
+                            // remmber to handle the case where a wrong IPIN is entered
+                            //remove loading screen
+                            Navigator.pop(context);
+                            showErrorWidget(context, "Please try again later");
+                            print(e);
+                            print("somthing went wrong");
                           }
                         }
                       })

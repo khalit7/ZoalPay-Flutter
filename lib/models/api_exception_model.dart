@@ -38,6 +38,14 @@ class AlreadyConfirmed extends BaseException {}
 
 class ServiceUnavailable extends BaseException {}
 
+class responseStatusFailed extends BaseException {}
+
+class InvalidIpin extends BaseException {}
+
+class PinTriesLimitExceeded extends BaseException {}
+
+class InvalidCard extends BaseException {}
+
 class Unknown extends BaseException {
   final String message;
   final int statusCode;
@@ -68,6 +76,24 @@ BaseException parseAPIResponseJson(json) {
       return UserDosNotExists();
     case "otpnotvalid":
       return WrongOtp();
+    case "INVALIDIPIN":
+      return InvalidIpin();
+    default:
+      return Unknown(
+        message: json["message"],
+        statusCode: json["status"],
+        errorKey: json["errorKey"],
+        title: json["title"],
+      );
+  }
+}
+
+BaseException parseAPIResponseToException(json) {
+  switch (json["responseMessage"]) {
+    case "Invalid PIN":
+      return InvalidIpin();
+    case "PIN tries limit was exceeded":
+      return PinTriesLimitExceeded();
     default:
       return Unknown(
         message: json["message"],
@@ -80,8 +106,8 @@ BaseException parseAPIResponseJson(json) {
 
 BaseException parseEBSResponseJson(Map<String, dynamic> json) {
   switch (json["responseMessage"]) {
-    case "":
-      return BaseException();
+    case "Invalid card":
+      return InvalidCard();
     default:
       return Unknown(
         message: "unknown error from EBS",
@@ -89,27 +115,27 @@ BaseException parseEBSResponseJson(Map<String, dynamic> json) {
   }
 }
 
-class ErrorModel {
-  final String entityName;
-  final String errorKey;
-  final int statusCode;
-  final String type;
-  final String message;
-  final String params;
+// class ErrorModel {
+//   final String entityName;
+//   final String errorKey;
+//   final int statusCode;
+//   final String type;
+//   final String message;
+//   final String params;
 
-  ErrorModel(
-      {this.entityName,
-      this.errorKey,
-      this.statusCode,
-      this.type,
-      this.message,
-      this.params});
+//   ErrorModel(
+//       {this.entityName,
+//       this.errorKey,
+//       this.statusCode,
+//       this.type,
+//       this.message,
+//       this.params});
 
-  ErrorModel.fromJson(Map<String, dynamic> json)
-      : this.entityName = json['entityName'],
-        this.errorKey = json['errorKey'],
-        this.statusCode = json['status'],
-        this.type = json['type'],
-        this.message = json['message'],
-        this.params = json['params'];
-}
+//   ErrorModel.fromJson(Map<String, dynamic> json)
+//       : this.entityName = json['entityName'],
+//         this.errorKey = json['errorKey'],
+//         this.statusCode = json['status'],
+//         this.type = json['type'],
+//         this.message = json['message'],
+//         this.params = json['params'];
+// }

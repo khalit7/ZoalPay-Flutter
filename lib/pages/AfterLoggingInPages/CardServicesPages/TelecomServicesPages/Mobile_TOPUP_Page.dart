@@ -1,25 +1,45 @@
 import 'package:ZoalPay/Widgets/Custom_Drawer.dart';
 import 'package:ZoalPay/Widgets/Loading_widget.dart';
 import 'package:ZoalPay/Widgets/Submit_Button.dart';
+import 'package:ZoalPay/Widgets/error_widgets.dart';
 import 'package:ZoalPay/lang/Localization.dart';
 import 'package:ZoalPay/models/card_model.dart';
 import 'package:ZoalPay/models/payee_model.dart';
 import 'package:ZoalPay/pages/AfterLoggingInPages/ReceiptPages/Transaction_Receipt.dart';
 import 'package:ZoalPay/provider/api_services.dart';
+import 'package:ZoalPay/utils/stringManipulation.dart';
+import 'package:date_time_picker/date_time_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:ZoalPay/utils/validators.dart';
+import 'package:ZoalPay/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:ZoalPay/models/api_exception_model.dart' as ApiExceptions;
 
-class MobileTopUpPage extends StatelessWidget {
+class MobileTopUpPage extends StatefulWidget {
   static final pageName = "MobileTopUpPage";
+
+  @override
+  _MobileTopUpPageState createState() => _MobileTopUpPageState();
+}
+
+class _MobileTopUpPageState extends State<MobileTopUpPage> {
   CardModel selectedCard;
+
   PayeeModel selectedOperator;
+
   var _cardNameController = TextEditingController();
+
   var _operatorController = TextEditingController();
+
   var _phoneNumberController = TextEditingController();
+
   var _amountController = TextEditingController();
+
   var _commentController = TextEditingController();
+
   var _IpinController = TextEditingController();
+
+  bool _validate = false;
 
   build(context) {
     var width = MediaQuery.of(context).size.width;
@@ -54,6 +74,8 @@ class MobileTopUpPage extends StatelessWidget {
                     fontWeight: FontWeight.w300,
                   ),
                   decoration: InputDecoration(
+                      errorText:
+                          selectedCard == null ? "Please select a card" : null,
                       labelText: Localization.of(context)
                           .getTranslatedValue("Card Number"),
                       suffixIcon: PopupMenuButton<CardModel>(
@@ -98,6 +120,9 @@ class MobileTopUpPage extends StatelessWidget {
                   decoration: InputDecoration(
                       labelText: Localization.of(context)
                           .getTranslatedValue("operator"),
+                      errorText: selectedOperator == null
+                          ? "Please select an operator"
+                          : null,
                       suffixIcon: PopupMenuButton<PayeeModel>(
                           itemBuilder: (BuildContext context) => [
                                 PopupMenuItem(
@@ -141,7 +166,12 @@ class MobileTopUpPage extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.w300,
                   ),
+                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
+                    errorText: _validate
+                        ? phoneNumbervalidError(
+                            _phoneNumberController.text.trim())
+                        : null,
                     labelText: Localization.of(context)
                         .getTranslatedValue("Phone Number"),
                   ),
@@ -167,10 +197,13 @@ class MobileTopUpPage extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.w300,
                   ),
+                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    labelText:
-                        Localization.of(context).getTranslatedValue("Amount"),
-                  ),
+                      labelText:
+                          Localization.of(context).getTranslatedValue("Amount"),
+                      errorText: _validate
+                          ? amountValidError(_amountController.text.trim())
+                          : null),
                 ),
               ),
             ],
@@ -216,13 +249,17 @@ class MobileTopUpPage extends StatelessWidget {
                   controller: _IpinController,
                   onChanged: (string) {},
                   onSubmitted: (string) {},
+                  obscureText: true,
                   style: TextStyle(
                     fontWeight: FontWeight.w300,
                   ),
+                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    labelText:
-                        Localization.of(context).getTranslatedValue("IPIN"),
-                  ),
+                      labelText:
+                          Localization.of(context).getTranslatedValue("IPIN"),
+                      errorText: _validate
+                          ? iPinValidError(_IpinController.text.trim())
+                          : null),
                 ),
               ),
             ],
@@ -231,39 +268,29 @@ class MobileTopUpPage extends StatelessWidget {
             height: height / 40,
           ),
           SubmitButton(() async {
+            setState(() {
+              _validate = true;
+            });
             // validate everything
-            if (selectedCard == null) {
-              // TODO:notify user to select a card
-              print("please select a card");
-            } else if (selectedOperator == null) {
-              //TODO: notify user to selec operator
-              print("please select an operator");
-            } else if (!isPhoneNumbervalid(
-                _phoneNumberController.text.trim())) {
-              //TODO: notify user to enter valid phone number
-              print("Please enter a valid phone number ");
-            } else if (!isAmountValid(_amountController.text.trim())) {
-              print(_amountController.text.trim());
-              //TODO: notify user to enter valid amount
-              print("Please enter a valid amount ");
-              print(isAmountValid(_amountController.text.trim()));
-            } else if (!isIpinValid(_IpinController.text.trim())) {
-              //TODO: notify user to enter a valid IPIN
-              print("please enter a valid IPIN");
-            } else {
+            if (selectedCard != null &&
+                selectedOperator != null &&
+                isPhoneNumbervalid(_phoneNumberController.text.trim()) &&
+                isAmountValid(_amountController.text.trim()) &&
+                isIpinValid(_IpinController.text.trim())) {
               // attempt the transaction
               try {
                 showLoadingDialog(context);
 
-                String cardNumber = await context.read<ApiService>().payBill(
+                await context.read<ApiService>().payBill(
                     selectedCard,
                     _IpinController.text.trim(),
                     int.parse(_amountController.text.trim()),
                     selectedOperator,
                     _phoneNumberController.text.trim(),
-                    _commentController.text.trim());
-                String date = DateTime.now().toString().substring(0,
-                    19); // this is to formate date time from UTZ to yy-mm-dd-hh-m-ss
+                    _commentController.text.trim(),
+                    paymentType.phoneBill);
+                String date = DateFormat.yMd().format(DateTime
+                    .now()); // this is to formate date time from UTZ to yy-mm-dd-hh-m-ss
 
                 Navigator.pop(context);
                 Navigator.push(
@@ -273,7 +300,8 @@ class MobileTopUpPage extends StatelessWidget {
                               subTitle: "Mobile TOPUP",
                               transactionValue: _amountController.text.trim(),
                               pageDetails: {
-                                "Card Number": cardNumber,
+                                "Card Number":
+                                    concealCardNumber(selectedCard.cardNumber),
                                 "Amount": _amountController.text.trim(),
                                 "Phone Number":
                                     _phoneNumberController.text.trim(),
@@ -281,22 +309,18 @@ class MobileTopUpPage extends StatelessWidget {
                                 "Comment": _commentController.text.trim()
                               },
                             )));
-
-                // parameters to pass already ready : _amountController.text.trim() , _phoneNumberController.text.trim() ,  _commentController.text.trim()
-                // parameters to pass comming from api request : card number , current balance
-                // navigate to the recipt page.
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //       builder: (context) => TransactionDetails(
-                //           balance: balanceAndPan[0],
-                //           cardNumber: balanceAndPan[1]),
-                //     ));
+              } on ApiExceptions.InvalidIpin catch (e) {
+                Navigator.pop(context);
+                showErrorWidget(context, "Wrong IPIN, please try again");
+              } on ApiExceptions.PinTriesLimitExceeded catch (e) {
+                Navigator.pop(context);
+                showErrorWidget(context,
+                    "PIN tries limit exceeded, please try again later");
               } catch (e) {
                 // remmber to handle the case where a wrong IPIN is entered
                 //remove loading screen
                 Navigator.pop(context);
-                //TODO:notify user that somthing went wrong
+                showErrorWidget(context, "Please try again later");
                 print(e);
                 print("somthing went wrong");
               }

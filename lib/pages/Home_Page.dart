@@ -24,7 +24,7 @@ class HomePage extends StatelessWidget {
             top: 0,
             bottom: height / 1.65,
             child: Image.asset(
-              "assets/ZoalPayImage.png",
+              "assets/images/ZoalPayImage.png",
             )),
         Positioned(
           left: (width / 2) - ((width * height / 6000)),
@@ -34,7 +34,7 @@ class HomePage extends StatelessWidget {
           child: Column(
             children: [
               Card(
-                child: Image.asset("assets/zoalPayLogo.png"),
+                child: Image.asset("assets/images/zoalPayLogo.png"),
                 color: Colors.redAccent,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),

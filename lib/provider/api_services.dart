@@ -4,6 +4,7 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:ZoalPay/models/card_model.dart';
+import 'package:ZoalPay/models/ebs_response_model.dart';
 import 'package:ZoalPay/models/payee_model.dart';
 import 'package:ZoalPay/models/transaction_model.dart';
 import 'package:flutter/material.dart';
@@ -18,84 +19,51 @@ import 'package:ZoalPay/models/api_exception_model.dart' as ApiExceptions;
 class NoIdTokenException implements Exception {}
 
 class ApiService {
-  final String _idToken =
-      "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI5MjIyMjgxMzkiLCJhdXRoIjoiQXV0aG9yaXR5e25hbWU9J1JPTEVfVVNFUid9IiwiZXhwIjoxNjIxNTI1NzI2fQ.dGDkj8xcpKmodpFsO4cl0fuc1LsqH1dQXGQD9iili8nBLGLQN3ZrwH3aJWC7WuhrvzkDNl-kDP9FVuYujP2SEQ";
-  final Map profile = {
-    "id": 14,
-    "login": "922228139",
-    "firstName": null,
-    "lastName": null,
-    "email": null,
-    "bio": null,
-    "createdDate": "2021-04-16T14:33:44Z",
-    "user": {
-      "id": 27,
-      "login": "922228139",
-      "firstName": null,
-      "lastName": null,
-      "email": null,
-      "activated": true,
-      "langKey": "en",
-      "imageUrl": null,
-      "resetDate": "2021-04-16T14:33:44Z"
-    },
-    "image": null,
-    "userMessages": null,
-    "comments": null,
-    "likes": null,
-    "posts": null,
-    "contacts": null,
-    "transactions": null,
-    "favorites": null,
-    "cards": null,
-    "internetCards": null
-  };
-  final String consumerKey =
-      "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBANx4gKYSMv3CrWWsxdPfxDxFvl+Is/0kc1dvMI1yNWDXI3AgdI4127KMUOv7gmwZ6SnRsHX/KAM0IPRe0+Sa0vMCAwEAAQ==";
+  String _idToken;
+  // =
+  //   "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI5MjIyMjgxMzkiLCJhdXRoIjoiQXV0aG9yaXR5e25hbWU9J1JPTEVfVVNFUid9IiwiZXhwIjoxNjU0OTc2NjE2fQ.KQH9YlOhxOjmwJOGCvj_o-vsRWvFqMd3GUrrKG_hbRR43dfhHSM5jlW9GRKsykPhbdsQmkE4ydXIVyQPJ1n1Ig";
+  Map profile;
+  //  = {
+  //   "id": 14,
+  //   "login": "922228139",
+  //   "firstName": null,
+  //   "lastName": null,
+  //   "email": null,
+  //   "bio": null,
+  //   "createdDate": "2021-04-16T14:33:44Z",
+  //   "user": {
+  //     "id": 27,
+  //     "login": "922228139",
+  //     "firstName": null,
+  //     "lastName": null,
+  //     "email": null,
+  //     "activated": true,
+  //     "langKey": "en",
+  //     "imageUrl": null,
+  //     "resetDate": "2021-04-16T14:33:44Z"
+  //   },
+  //   "image": null,
+  //   "userMessages": null,
+  //   "comments": null,
+  //   "likes": null,
+  //   "posts": null,
+  //   "contacts": null,
+  //   "transactions": null,
+  //   "favorites": null,
+  //   "cards": null,
+  //   "internetCards": null
+  // };
+  String consumerKey;
+  // =
+  //     "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBANx4gKYSMv3CrWWsxdPfxDxFvl+Is/0kc1dvMI1yNWDXI3AgdI4127KMUOv7gmwZ6SnRsHX/KAM0IPRe0+Sa0vMCAwEAAQ==";
   String _jwt;
   var uuid = Uuid();
   final dio = Dio(BaseOptions(
-    baseUrl: Constants.API_BASE_URL,
-    contentType: Headers.jsonContentType,
-    headers: {HttpHeaders.acceptHeader: Headers.jsonContentType},
-  ));
-  // ApiService({String token, String jwt})
-  //     : _idToken = token,
-  //       _jwt = jwt {
-  //   dio.transformer = FlutterTransformer();
-  //   //dio.interceptors.add(_ErrorInterceptor());
-  //   // dio.interceptors.add(_JwtInterceptor(
-  //   //   dio: dio,
-  //   //   jwt: _jwt,
-  //   //   fetchJwt: _updateJwt,
-  //   // ));
-  // }
-
-  // void setIdToken(String idToken) {
-  //   _idToken = idToken;
-  // }
-
-  // Future<String> fetchJwt() async {
-  //   if (_idToken == null) {
-  //     throw NoIdTokenException;
-  //   }
-  //   final endpoint = "api/authenticate";
-  //   final response = await dio.post(
-  //     endpoint,
-  //     options: Options(
-  //       headers: {HttpHeaders.authorizationHeader: "Bearer $_idToken"},
-  //       extra: {"jwtAuth": false},
-  //     ),
-  //   );
-  //   return response.data['id_token'];
-  // }
-
-  // Future<String> _updateJwt() async {
-  //   _jwt = await fetchJwt();
-  //   return _jwt;
-  // }
-
-  // Future<void> signUpWithPhoneNumber() {}
+      baseUrl: Constants.API_BASE_URL,
+      contentType: Headers.jsonContentType,
+      headers: {HttpHeaders.acceptHeader: Headers.jsonContentType},
+      connectTimeout: 90 * 1000, // 90 seconds
+      receiveTimeout: 90 * 1000));
 
   Future<void> sendOtp(String phoneNumber, otpType currentOtpType) async {
     String endPoint;
@@ -131,9 +99,9 @@ class ApiService {
       // set the tokens and other variables
       var jsonResponse = response.data;
 
-      // profile = jsonResponse["profile"];
-      // consumerKey = jsonResponse["consumerKey"];
-      // _idToken = jsonResponse["id_token"];
+      profile = jsonResponse["profile"];
+      consumerKey = jsonResponse["consumerKey"];
+      _idToken = jsonResponse["id_token"];
 
       dio.interceptors.add(_JwtInterceptor(
         dio: dio,
@@ -142,7 +110,6 @@ class ApiService {
     } on DioError catch (e) {
       throw ApiExceptions.parseAPIResponseJson(jsonDecode(e.response.data));
     }
-    // do some processing. you may need to seve some stuff to local memory (e.g: id_token , cosumer_key)
   }
 
   Future<CardModel> addCard(String name, String expDate, String pan) async {
@@ -159,10 +126,6 @@ class ApiService {
   }
 
   Future<List<CardModel>> getAllCards() async {
-    dio.interceptors.add(_JwtInterceptor(
-      dio: dio,
-      jwt: _idToken,
-    )); // TODO: delete this line when you finish testing
     String endpoint = "/api/card-profile";
     Response response = await dio.get(endpoint);
 
@@ -212,7 +175,7 @@ class ApiService {
     };
   }
 
-  Future<List> getBalance(CardModel card, String Ipin) async {
+  Future<String> getBalance(CardModel card, String Ipin) async {
     String endpoint = "/api/consumer/getBalance";
 
     String transactionUUID = uuid.v1();
@@ -233,7 +196,7 @@ class ApiService {
     print(response?.data["responseStatus"]);
     if (response?.data["responseStatus"] == "Failed")
       throw ApiExceptions.parseEBSResponseJson(response.data);
-    return [response.data["balance"]["available"], response.data["PAN"]];
+    return response.data["balance"]["available"];
   }
 
   Future<List<PayeeModel>> getPayeeList() async {
@@ -246,36 +209,6 @@ class ApiService {
 
     return allPayees;
   }
-
-  // Future<List> mobileTopUp(CardModel card, String Ipin, int amount,
-  //     PayeeModel payee, String phoneNumber, String comment) async {
-  //   String phoneNumberWithoutZero = phoneNumber.substring(1);
-  //   String endpoint = "/api/consumer/payment";
-  //   String transactionUUID = uuid.v1();
-  //   String encryptedIPIN =
-  //       EncrypterUtil.encrypt("$transactionUUID" + "$Ipin", "$consumerKey");
-
-  //   Map data = {
-  //     "UUID": "$transactionUUID",
-  //     "IPIN": "$encryptedIPIN",
-  //     "tranAmount": amount,
-  //     "tranCurrency": "SDG",
-  //     "PAN": "${card.cardNumber}",
-  //     "expDate": "${card.expiryDate}",
-  //     "authenticationType": "00",
-  //     "entityType": null,
-  //     "entityId": null,
-  //     "fromAccountType": "00",
-  //     "toAccountType": "00",
-  //     "paymentInfo": "MPHONE=" + "$phoneNumberWithoutZero",
-  //     "payeeId": "$payee.payeeName",
-  //     "comment": "$comment"
-  //   };
-
-  //   Response response = await dio.post(endpoint, data: data);
-
-  //   return [response.data["PAN"], response.data["billInfo"]["subNewBalance"]];
-  // }
 
   Future<void> getBill(
       CardModel card, String phoneNumber, String Ipin, PayeeModel payee) async {
@@ -303,13 +236,29 @@ class ApiService {
     Response response = await dio.post(endpoint, data: data);
   }
 
-  Future<String> payBill(CardModel card, String Ipin, int amount,
-      PayeeModel payee, String phoneNumber, String comment) async {
+  Future<Map> payBill(
+      CardModel card,
+      String Ipin,
+      int amount,
+      PayeeModel payee,
+      String number, // this could be phone number or meter number
+      String comment,
+      paymentType paymenttype) async {
     String endpoint = "/api/consumer/payment";
-    String phoneNumberWithoutZero = phoneNumber.substring(1);
     String transactionUUID = uuid.v1();
     String encryptedIPIN =
         EncrypterUtil.encrypt("$transactionUUID" + "$Ipin", "$consumerKey");
+    String paymentInfo;
+
+    switch (paymenttype) {
+      case paymentType.phoneBill:
+        String phoneNumberWithoutZero = number.substring(1);
+        paymentInfo = "MPHONE=" + "$phoneNumberWithoutZero";
+        break;
+      case paymentType.electricityBill:
+        paymentInfo = "METER=" + "$number";
+        break;
+    }
 
     Map data = {
       "UUID": "$transactionUUID",
@@ -323,34 +272,55 @@ class ApiService {
       "entityId": null,
       "fromAccountType": "00",
       "toAccountType": "00",
-      "paymentInfo": "MPHONE=" + "$phoneNumberWithoutZero",
+      "paymentInfo": "$paymentInfo",
       "payeeId": "${payee.payeeName}",
       "comment": "$comment"
     };
 
     Response response = await dio.post(endpoint, data: data);
-    return response.data["PAN"];
+
+    if (response.data["responseStatus"] == "Failed")
+      throw ApiExceptions.parseAPIResponseToException(response.data);
+    else {
+      // successfull transaction
+      Map returnvalue = Map();
+      switch (paymenttype) {
+        case paymentType.phoneBill:
+          break;
+        case paymentType.electricityBill:
+          returnvalue['token'] = response.data["billInfo"]["token"];
+          returnvalue['customer Name'] =
+              response.data["billInfo"]['customerName'];
+          returnvalue['unitsInKWh'] = response.data["billInfo"]["unitsInKWh"];
+          returnvalue['water Fees'] = response.data["billInfo"]["waterFees"];
+          break;
+      }
+      return returnvalue;
+    }
   }
 
   Future<List<TransactionModel>> getTransactionHistory() async {
     String endpoint = "/api/all-profile-transactions";
 
     Response response = await dio.get(endpoint);
+
     List<TransactionModel> allTransactions = [];
     // loop throw all transactions
     response.data.forEach((transactionJson) {
-      if (transactionJson["type"].startsWith("Consumer")) {
-        if (transactionJson["type"].split(" ").last != "getPayeesList" &&
-            transactionJson["type"].split(" ").last != "getPublicKey")
-          allTransactions.add(TransactionModel.fromJson(transactionJson));
-      }
-      //TODO:implement other cases here
+      EbsResponseModel ebsResbonse;
+      if (transactionJson["ebsResponse"] != null)
+        ebsResbonse = EbsResponseModel.fromJson(
+            jsonDecode(transactionJson["ebsResponse"]));
+      allTransactions
+          .add(TransactionModel.fromJson(transactionJson, ebsResbonse));
     });
     //filter unwanted transactions
     allTransactions = allTransactions.where((transaction) {
       if (transaction.type.split(" ").last == "getPayeesList")
         return false;
       else if (transaction.type.split(" ").last == "getPublicKey")
+        return false;
+      else if (!transaction.isSuccessful)
         return false;
       else
         return true;
@@ -407,6 +377,10 @@ class ApiService {
 
     //TODO: do some error handeling ... to make faild transactions not lead us to recipt page.
     return response.data["voucherCode"];
+  }
+
+  void logOut() {
+    dio.interceptors.removeLast();
   }
   //
 }

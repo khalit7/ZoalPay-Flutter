@@ -9,6 +9,7 @@ import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Drawer_pages
 import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Drawer_pages/Entertainment_Card_History_page.dart';
 import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Drawer_pages/Favourites_Page.dart';
 import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Drawer_pages/Generate_IPIN_Page.dart';
+import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Drawer_pages/card_info_page.dart';
 import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Drawer_pages/Transaction_History_Page.dart';
 import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Electrictiy_Services_Page.dart';
 import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Entertainment_Page.dart';
@@ -37,6 +38,7 @@ import 'pages/AfterLoggingInPages/CardServicesPages/Zoal_Khair_Page.dart';
 import 'pages/AfterLoggingInPages/Card_Services_Page.dart';
 import 'pages/Home_Page.dart';
 import 'package:ZoalPay/pages/HomePagePages/validate_otp_page.dart';
+import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Money_Transfer_Pages/Confirm_transfer_page.dart';
 
 class MyApp extends StatefulWidget {
   static void setLocale(BuildContext context, Locale locale) {
@@ -118,6 +120,7 @@ class _MyAppState extends State<MyApp> {
           AboutUsPage.pageName: (context) => AboutUsPage(),
           ValidateOtpPage.pageName: (context) => ValidateOtpPage(),
           TransactionReceipt.pageName: (context) => TransactionReceipt(),
+          ConfirmTransferPage.pageName: (context) => ConfirmTransferPage(),
         });
   }
 }

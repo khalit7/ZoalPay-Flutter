@@ -71,7 +71,21 @@
     "Current Balance": "الرصيد الحالي",
     "Sudani ADSL bill Payment": " دفع فاتوره سوداني الارضي",
     "Transfer Card To Card": "تحويل بطاقه لبطاقه",
-    "Voucher Code": "رمز الفاتورة"
+    "Voucher Code": "رمز الفاتورة",
+    "token": "الرمز",
+    "customer Name": "اسم العميل",
+    "unitsInKWh": "unitsInKWh",
+    "water Fees": "فاتوره الماء",
+    "Account No": "رقم الحساب",
+    "Name": "الاسم",
+    "Bank": "البنك",
+    "Card Info": "معلومات البطاقه",
+    "Edit Card": "عدل البطاقه",
+    "Change card details": "عدل تفاصيل البطاقه",
+    "PIN code": "رمز البطاقه",
+    "Delete card": "امسح البطاقه",
+    "Delete card from your cards": "امسح البطاقه من بطاقاتك",
+    "number": "الرقم"
 
 
 
