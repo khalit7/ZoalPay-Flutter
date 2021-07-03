@@ -309,7 +309,8 @@ class _BillPaymentPageState extends State<BillPaymentPage> {
                                 selectedCardTab1,
                                 _phoneNumberControllertab1.text.trim(),
                                 _ipinControllerTab1.text.trim(),
-                                selectedOperatorTab1);
+                                selectedOperatorTab1,
+                                paymentType.phoneBill);
                           } on ApiExceptions.InvalidIpin catch (e) {
                             Navigator.pop(context);
                             showErrorWidget(

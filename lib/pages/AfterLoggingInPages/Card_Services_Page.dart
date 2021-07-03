@@ -44,12 +44,13 @@ class CardServicesPage extends StatelessWidget {
                     children: [
                       CardWithImageAndText(
                           IconButton(
+                              highlightColor: Colors.red,
                               onPressed: () {
                                 Navigator.pushNamed(
                                     context, ScanAndPayPage.pageName);
                               },
                               icon: Icon(Icons.scanner, color: Colors.red),
-                              iconSize: width / 3),
+                              iconSize: width / 4),
                           Text(
                               Localization.of(context)
                                   .getTranslatedValue("Scan & Pay"),
@@ -65,7 +66,7 @@ class CardServicesPage extends StatelessWidget {
                             },
                             icon: Icon(Icons.crop_free_rounded,
                                 color: Colors.red),
-                            iconSize: width / 3,
+                            iconSize: width / 4,
                           ),
                           Text(
                             Localization.of(context)
@@ -86,7 +87,7 @@ class CardServicesPage extends StatelessWidget {
                                     context, TelecomSevicesPage.pageName);
                               },
                               icon: Icon(Icons.phone, color: Colors.red),
-                              iconSize: width / 3),
+                              iconSize: width / 4),
                           Text(
                               Localization.of(context)
                                   .getTranslatedValue("Telecom Services"),
@@ -102,7 +103,7 @@ class CardServicesPage extends StatelessWidget {
                                     context, ElectricityServicesPage.pageName);
                               },
                               icon: Icon(Icons.bolt, color: Colors.red),
-                              iconSize: width / 3),
+                              iconSize: width / 4),
                           Text(
                               Localization.of(context)
                                   .getTranslatedValue("Electricity Services"),
@@ -121,7 +122,7 @@ class CardServicesPage extends StatelessWidget {
                                     context, GovermentServices.pageName);
                               },
                               icon: Icon(Icons.work, color: Colors.red),
-                              iconSize: width / 3),
+                              iconSize: width / 4),
                           Text(
                               Localization.of(context)
                                   .getTranslatedValue("Goverment Services"),
@@ -138,7 +139,7 @@ class CardServicesPage extends StatelessWidget {
                               },
                               icon: Icon(Icons.attach_money_sharp,
                                   color: Colors.red),
-                              iconSize: width / 3),
+                              iconSize: width / 4),
                           Text(
                               Localization.of(context)
                                   .getTranslatedValue("Money Transfer"),
@@ -158,7 +159,7 @@ class CardServicesPage extends StatelessWidget {
                               },
                               icon: Icon(Icons.volunteer_activism,
                                   color: Colors.red),
-                              iconSize: width / 3),
+                              iconSize: width / 4),
                           Text(
                               Localization.of(context)
                                   .getTranslatedValue("Zoal Khair"),
@@ -175,7 +176,7 @@ class CardServicesPage extends StatelessWidget {
                               },
                               icon: Icon(Icons.payment_outlined,
                                   color: Colors.red),
-                              iconSize: width / 3),
+                              iconSize: width / 4),
                           Text(
                               Localization.of(context)
                                   .getTranslatedValue("Dal Payment"),
@@ -195,7 +196,7 @@ class CardServicesPage extends StatelessWidget {
                               },
                               icon: Icon(Icons.storefront_rounded,
                                   color: Colors.red),
-                              iconSize: width / 3),
+                              iconSize: width / 4),
                           Text(
                               Localization.of(context)
                                   .getTranslatedValue("Billers"),
@@ -212,7 +213,7 @@ class CardServicesPage extends StatelessWidget {
                               },
                               icon: Icon(Icons.tag_faces_sharp,
                                   color: Colors.red),
-                              iconSize: width / 3),
+                              iconSize: width / 4),
                           Text(
                               Localization.of(context)
                                   .getTranslatedValue("Entertainment"),

@@ -210,13 +210,26 @@ class ApiService {
     return allPayees;
   }
 
-  Future<void> getBill(
-      CardModel card, String phoneNumber, String Ipin, PayeeModel payee) async {
+  Future<void> getBill(CardModel card, String number, String Ipin,
+      PayeeModel payee, paymentType paymenttype) async {
     String endpoint = "/api/consumer/getBill";
-    String phoneNumberWithoutZero = phoneNumber.substring(1);
     String transactionUUID = uuid.v1();
     String encryptedIPIN =
         EncrypterUtil.encrypt("$transactionUUID" + "$Ipin", "$consumerKey");
+
+    String paymentInfo;
+
+    switch (paymenttype) {
+      case paymentType.phoneBill:
+        String phoneNumberWithoutZero = number.substring(1);
+        paymentInfo = "MPHONE=" + "$phoneNumberWithoutZero";
+        break;
+      case paymentType.dalBill:
+        paymentInfo = "REFERENCE=" + "$number";
+        break;
+      default:
+        break;
+    }
 
     Map data = {
       "UUID": "$transactionUUID",
@@ -229,11 +242,17 @@ class ApiService {
       "entityId": null,
       "fromAccountType": "00",
       "toAccountType": "00",
-      "paymentInfo": "MPHONE=" + "$phoneNumberWithoutZero",
+      "paymentInfo": "$paymentInfo",
       "payeeId": "$payee.payeeName",
     };
 
     Response response = await dio.post(endpoint, data: data);
+    if (response.data["responseStatus"] == "Failed")
+      throw ApiExceptions.parseAPIResponseToException(response.data);
+    else {
+      // sucessfull transaction
+
+    }
   }
 
   Future<Map> payBill(
@@ -257,6 +276,12 @@ class ApiService {
         break;
       case paymentType.electricityBill:
         paymentInfo = "METER=" + "$number";
+        break;
+      case paymentType.dalBill:
+        paymentInfo = "REFERENCE=" +
+            "$number"; // TODO: change REFEREBCE to the correct string
+        break;
+      default:
         break;
     }
 

@@ -6,6 +6,7 @@ import 'package:ZoalPay/Widgets/error_widgets.dart';
 import 'package:ZoalPay/lang/Localization.dart';
 import 'package:ZoalPay/models/card_model.dart';
 import 'package:ZoalPay/provider/api_services.dart';
+import 'package:ZoalPay/utils/stringManipulation.dart';
 import 'package:ZoalPay/utils/validators.dart';
 import 'package:flutter/material.dart';
 import 'package:page_indicator/page_indicator.dart';
@@ -36,12 +37,12 @@ class _CardInfoPageState extends State<CardInfoPage> {
   String _balance = "";
 
   // swipable credit card
-  Widget swipeableCreditCard(var width, var height) {
+  Widget swipeableCreditCard(CardModel card, var width, var height) {
     return Positioned(
         left: width / 40,
         right: width / 40,
         top: height / 40,
-        height: height / 4,
+        height: height / 3.5,
         child: Dismissible(
             onDismissed: (_) {
               print("dismissed");
@@ -57,11 +58,79 @@ class _CardInfoPageState extends State<CardInfoPage> {
             },
             direction: DismissDirection.startToEnd,
             key: ValueKey("1"),
-            child: FittedBox(
-              child: Material(
-                  elevation: 40,
-                  child: Image.asset('assets/images/credit_card_image.PNG')),
-              fit: BoxFit.fill,
+            child: Container(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: height / 7,
+                  ),
+                  // card number
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(width / 8, 0, width / 8, 0),
+                    child: Text(
+                      addSpacesToCardNumber(card.cardNumber),
+                      style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          color: Colors.yellow[400],
+                          fontSize: height * width / 22000),
+                    ),
+                  ),
+                  SizedBox(
+                    height: height / 50,
+                  ),
+                  // card holder name and expiry date list tile
+                  ListTile(
+                    isThreeLine: true,
+                    title: Text(
+                      "CARD HOLDER NAME",
+                      style: TextStyle(
+                        color: Colors.yellow[400],
+                      ),
+                    ),
+                    subtitle: Text(
+                      card.cardUserName.toUpperCase(),
+                      style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          color: Colors.yellow[400],
+                          fontSize: height * width / 40000),
+                    ),
+                    trailing: Column(
+                      children: [
+                        Text(
+                          "EXP DATE:",
+                          style: TextStyle(
+                            color: Colors.yellow[400],
+                          ),
+                        ),
+                        Text(
+                          beautifyExpiryDate(card.expiryDate),
+                          style: TextStyle(
+                              fontWeight: FontWeight.w900,
+                              color: Colors.yellow[400],
+                              fontSize: height * width / 40000),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black,
+                      blurRadius: 10.0,
+                      spreadRadius: 0.0,
+                      offset:
+                          Offset(2.0, 2.0), // shadow direction: bottom right
+                    )
+                  ],
+                  borderRadius:
+                      BorderRadius.all(Radius.circular(width * height / 40000)),
+                  image: DecorationImage(
+                      image: AssetImage("assets/images/credit_card_image.PNG"),
+                      fit: BoxFit.cover)),
             )));
   }
 
@@ -189,7 +258,7 @@ class _CardInfoPageState extends State<CardInfoPage> {
             // the credit card image
             _isSwiped
                 ? cardBalance(width, height)
-                : swipeableCreditCard(width, height),
+                : swipeableCreditCard(widget.card, width, height),
             // the divider
             Positioned(
               top: height / 4,
@@ -377,16 +446,15 @@ class _UpdateCardDialogState extends State<UpdateCardDialog> {
                   // pop loading
                   Navigator.pop(context);
 
-                  // setState(() {
-                  //   widget.card.cardUserName = _editCardUserNameController.text;
-                  //   widget.card.cardNumber = _editCardNumberController.text;
-                  //   widget.card.expiryDate = _editExpiryDateController.text;
+                  setState(() {
+                    widget.card.cardUserName = _editCardUserNameController.text;
+                    widget.card.cardNumber = _editCardNumberController.text;
+                    widget.card.expiryDate = _editExpiryDateController.text;
 
-                  //   Navigator.pop(context);
-                  //   _editCardUserNameController.text = "";
-                  //   _editCardNumberController.text = "";
-                  //   _editExpiryDateController.text = "";
-                  // });
+                    // _editCardUserNameController.text = "";
+                    // _editCardNumberController.text = "";
+                    // _editExpiryDateController.text = "";
+                  });
                 } catch (e) {
                   //remove loading screen
                   Navigator.pop(context);

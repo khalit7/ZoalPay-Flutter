@@ -208,7 +208,8 @@ class _SudaniAdSlPageState extends State<SudaniAdSlPage> {
                                   selectedCardTab1,
                                   _phoneNumberControllerTab1.text.trim(),
                                   _ipinControllerTab1.text.trim(),
-                                  sudaniBillPaymentPayeeModel);
+                                  sudaniBillPaymentPayeeModel,
+                                  paymentType.phoneBill);
                               // pop loading page
                               // go to recipt page
                               Navigator.pop(context);

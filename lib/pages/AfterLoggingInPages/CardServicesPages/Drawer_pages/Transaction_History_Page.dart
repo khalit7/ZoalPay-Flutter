@@ -27,6 +27,8 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
   }
 
   build(context) {
+    var width = MediaQuery.of(context).size.width;
+    var height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -46,6 +48,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
               children: displayedTransactions
                   .map((transaction) => Container(
                         child: ListTile(
+                          leading: transaction.transactionIcon,
                           title: Text(transaction.type),
                           subtitle: Text(
                             transaction.responseMessage +
@@ -53,8 +56,8 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                                 DateFormat.yMd().format(transaction.date),
                           ),
                           isThreeLine: true,
-                          trailing:
-                              _transactionStatusIcon(transaction.isSuccessful),
+                          trailing: _transactionStatusIcon(
+                              transaction, width, height),
                           onTap: () {
                             if (!transaction.isSuccessful) return;
                             Map _pageDetails = {};
@@ -89,9 +92,10 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
                                 MaterialPageRoute(
                                     builder: (context) => TransactionReceipt(
                                           subTitle: transaction.type,
-                                          transactionValue: transaction
-                                              .transactionAmount
-                                              .toString(),
+                                          transactionValue:
+                                              beautifyTransactionAmount(
+                                                  transaction.transactionAmount
+                                                      .toString()),
                                           pageDetails: _pageDetails,
                                         )));
                             ;
@@ -109,34 +113,46 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
     );
   }
 
-  Widget _transactionStatusIcon(bool isSuccessful) {
-    if (isSuccessful) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-              child: Icon(
-                Icons.check,
-                color: Colors.white,
-              ),
-              decoration:
-                  BoxDecoration(shape: BoxShape.circle, color: Colors.green)),
-        ],
-      );
-    } else {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-              child: Icon(
-                Icons.close,
-                color: Colors.white,
-              ),
-              decoration:
-                  BoxDecoration(shape: BoxShape.circle, color: Colors.red)),
-        ],
-      );
+  Widget _transactionStatusIcon(
+      TransactionModel transaction, var width, var height) {
+    Icon tranStatusIcon;
+    TextStyle customTextStyle;
+    switch (transaction.cashStatus) {
+      case cashStatusEnum.cashIn:
+        tranStatusIcon = Icon(Icons.arrow_downward, color: Colors.green);
+        customTextStyle =
+            TextStyle(color: Colors.green, fontWeight: FontWeight.bold);
+        break;
+      case cashStatusEnum.cashOut:
+        tranStatusIcon = Icon(Icons.arrow_upward, color: Colors.red);
+        customTextStyle =
+            TextStyle(color: Colors.red, fontWeight: FontWeight.bold);
+        break;
+      case cashStatusEnum.neutral:
+        tranStatusIcon = Icon(
+          Icons.circle,
+          color: Colors.grey,
+        );
+        customTextStyle =
+            TextStyle(color: Colors.grey, fontWeight: FontWeight.bold);
+        break;
     }
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          "\SDG " +
+              "${beautifyTransactionAmount(transaction.transactionAmount.toString())}",
+          style: customTextStyle,
+        ),
+        SizedBox(
+          width: 20,
+        ),
+        tranStatusIcon,
+      ],
+    );
   }
 
   Future<Null> _selectDate(BuildContext context) async {

@@ -36,3 +36,9 @@ PayeeModel sudaniBillPaymentPayeeModel = PayeeModel.allPayees
 
 PayeeModel electricityPayeeModel = PayeeModel.allPayees
     .firstWhere((payee) => payee.payeeName == "National Electricity Corp.");
+
+PayeeModel dalPayeeModel =
+    PayeeModel.allPayees.firstWhere((payee) => payee.payeeName == "Dal Biller");
+
+PayeeModel e15PayeeModel =
+    PayeeModel.allPayees.firstWhere((payee) => payee.payeeName == "E15");
