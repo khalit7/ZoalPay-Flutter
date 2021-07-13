@@ -1,6 +1,7 @@
 import 'package:ZoalPay/Widgets/Card_With_Image_And_Text.dart';
 import 'package:ZoalPay/Widgets/Custom_Drawer.dart';
 import 'package:ZoalPay/Widgets/Loading_widget.dart';
+import 'package:ZoalPay/Widgets/custom_icon_button.dart';
 import 'package:ZoalPay/lang/Localization.dart';
 import 'package:ZoalPay/models/card_model.dart';
 import 'package:ZoalPay/models/payee_model.dart';
@@ -25,6 +26,8 @@ class CardServicesPage extends StatelessWidget {
   build(context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+    MainAxisAlignment rowAllignment = MainAxisAlignment.spaceEvenly;
+
     return WillPopScope(
       onWillPop: () => Future.value(false),
       child: Scaffold(
@@ -37,191 +40,146 @@ class CardServicesPage extends StatelessWidget {
           body: Stack(
             children: [
               Container(color: Colors.grey[200]),
-              ListView(
-                children: [
-                  //first row
-                  Row(
-                    children: [
-                      CardWithImageAndText(
-                          IconButton(
-                              highlightColor: Colors.red,
-                              onPressed: () {
-                                Navigator.pushNamed(
-                                    context, ScanAndPayPage.pageName);
-                              },
-                              icon: Icon(Icons.scanner, color: Colors.red),
-                              iconSize: width / 4),
-                          Text(
-                              Localization.of(context)
-                                  .getTranslatedValue("Scan & Pay"),
-                              style: TextStyle(color: Colors.red),
-                              textScaleFactor: 1.2)),
-                      SizedBox(
-                        width: width - (2 * width / 2.01),
-                      ),
-                      CardWithImageAndText(
-                          IconButton(
-                            onPressed: () {
+              SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: rowAllignment,
+                  children: [
+                    //first row
+                    Row(
+                      mainAxisAlignment: rowAllignment,
+                      children: [
+                        CardWithImageAndText(
+                            CustomIconButton(() {
+                              Navigator.pushNamed(
+                                  context, ScanAndPayPage.pageName);
+                            }, Icons.scanner),
+                            Text(
+                                Localization.of(context)
+                                    .getTranslatedValue("Scan & Pay"),
+                                style: TextStyle(color: Colors.red),
+                                textScaleFactor: 1.2)),
+                        CardWithImageAndText(
+                            CustomIconButton(() {
                               Navigator.pushNamed(context, QRPage.pageName);
-                            },
-                            icon: Icon(Icons.crop_free_rounded,
-                                color: Colors.red),
-                            iconSize: width / 4,
-                          ),
-                          Text(
-                            Localization.of(context)
-                                .getTranslatedValue("My QR"),
-                            style: TextStyle(color: Colors.red),
-                            textScaleFactor: 1.2,
-                          )),
-                    ],
-                  ),
+                            }, Icons.crop_free_rounded),
+                            Text(
+                              Localization.of(context)
+                                  .getTranslatedValue("My QR"),
+                              style: TextStyle(color: Colors.red),
+                              textScaleFactor: 1.2,
+                            )),
+                      ],
+                    ),
 
-                  //second row
-                  Row(
-                    children: [
-                      CardWithImageAndText(
-                          IconButton(
-                              onPressed: () async {
-                                Navigator.pushNamed(
-                                    context, TelecomSevicesPage.pageName);
-                              },
-                              icon: Icon(Icons.phone, color: Colors.red),
-                              iconSize: width / 4),
-                          Text(
-                              Localization.of(context)
-                                  .getTranslatedValue("Telecom Services"),
-                              style: TextStyle(color: Colors.red),
-                              textScaleFactor: 1.2)),
-                      SizedBox(
-                        width: width - (2 * width / 2.01),
-                      ),
-                      CardWithImageAndText(
-                          IconButton(
-                              onPressed: () {
-                                Navigator.pushNamed(
-                                    context, ElectricityServicesPage.pageName);
-                              },
-                              icon: Icon(Icons.bolt, color: Colors.red),
-                              iconSize: width / 4),
-                          Text(
-                              Localization.of(context)
-                                  .getTranslatedValue("Electricity Services"),
-                              style: TextStyle(color: Colors.red),
-                              textScaleFactor: 1.2)),
-                    ],
-                  ),
+                    //second row
+                    Row(
+                      mainAxisAlignment: rowAllignment,
+                      children: [
+                        CardWithImageAndText(
+                            CustomIconButton(() {
+                              Navigator.pushNamed(
+                                  context, TelecomSevicesPage.pageName);
+                            }, Icons.phone),
+                            Text(
+                                Localization.of(context)
+                                    .getTranslatedValue("Telecom Services"),
+                                style: TextStyle(color: Colors.red),
+                                textScaleFactor: 1.2)),
+                        CardWithImageAndText(
+                            CustomIconButton(() {
+                              Navigator.pushNamed(
+                                  context, ElectricityServicesPage.pageName);
+                            }, Icons.bolt),
+                            Text(
+                                Localization.of(context)
+                                    .getTranslatedValue("Electricity Services"),
+                                style: TextStyle(color: Colors.red),
+                                textScaleFactor: 1.2)),
+                      ],
+                    ),
 
-                  //third row
-                  Row(
-                    children: [
-                      CardWithImageAndText(
-                          IconButton(
-                              onPressed: () {
-                                Navigator.pushNamed(
-                                    context, GovermentServices.pageName);
-                              },
-                              icon: Icon(Icons.work, color: Colors.red),
-                              iconSize: width / 4),
-                          Text(
-                              Localization.of(context)
-                                  .getTranslatedValue("Goverment Services"),
-                              style: TextStyle(color: Colors.red),
-                              textScaleFactor: 1.2)),
-                      SizedBox(
-                        width: width - (2 * width / 2.01),
-                      ),
-                      CardWithImageAndText(
-                          IconButton(
-                              onPressed: () {
-                                Navigator.pushNamed(
-                                    context, MoneyTransferPage.pageName);
-                              },
-                              icon: Icon(Icons.attach_money_sharp,
-                                  color: Colors.red),
-                              iconSize: width / 4),
-                          Text(
-                              Localization.of(context)
-                                  .getTranslatedValue("Money Transfer"),
-                              style: TextStyle(color: Colors.red),
-                              textScaleFactor: 1.2)),
-                    ],
-                  ),
+                    //third row
+                    Row(
+                      mainAxisAlignment: rowAllignment,
+                      children: [
+                        CardWithImageAndText(
+                            CustomIconButton(() {
+                              Navigator.pushNamed(
+                                  context, GovermentServices.pageName);
+                            }, Icons.work),
+                            Text(
+                                Localization.of(context)
+                                    .getTranslatedValue("Goverment Services"),
+                                style: TextStyle(color: Colors.red),
+                                textScaleFactor: 1.2)),
+                        CardWithImageAndText(
+                            CustomIconButton(() {
+                              Navigator.pushNamed(
+                                  context, MoneyTransferPage.pageName);
+                            }, Icons.attach_money),
+                            Text(
+                                Localization.of(context)
+                                    .getTranslatedValue("Money Transfer"),
+                                style: TextStyle(color: Colors.red),
+                                textScaleFactor: 1.2)),
+                      ],
+                    ),
 
-                  //fourth row
-                  Row(
-                    children: [
-                      CardWithImageAndText(
-                          IconButton(
-                              onPressed: () {
-                                Navigator.pushNamed(
-                                    context, ZoalKhairPage.pageName);
-                              },
-                              icon: Icon(Icons.volunteer_activism,
-                                  color: Colors.red),
-                              iconSize: width / 4),
-                          Text(
-                              Localization.of(context)
-                                  .getTranslatedValue("Zoal Khair"),
-                              style: TextStyle(color: Colors.red),
-                              textScaleFactor: 1.2)),
-                      SizedBox(
-                        width: width - (2 * width / 2.01),
-                      ),
-                      CardWithImageAndText(
-                          IconButton(
-                              onPressed: () {
-                                Navigator.pushNamed(
-                                    context, DalPaymentPage.pageName);
-                              },
-                              icon: Icon(Icons.payment_outlined,
-                                  color: Colors.red),
-                              iconSize: width / 4),
-                          Text(
-                              Localization.of(context)
-                                  .getTranslatedValue("Dal Payment"),
-                              style: TextStyle(color: Colors.red),
-                              textScaleFactor: 1.2)),
-                    ],
-                  ),
+                    //fourth row
+                    Row(
+                      mainAxisAlignment: rowAllignment,
+                      children: [
+                        CardWithImageAndText(
+                            CustomIconButton(() {
+                              Navigator.pushNamed(
+                                  context, ZoalKhairPage.pageName);
+                            }, Icons.volunteer_activism),
+                            Text(
+                                Localization.of(context)
+                                    .getTranslatedValue("Zoal Khair"),
+                                style: TextStyle(color: Colors.red),
+                                textScaleFactor: 1.2)),
+                        CardWithImageAndText(
+                            CustomIconButton(() {
+                              Navigator.pushNamed(
+                                  context, DalPaymentPage.pageName);
+                            }, Icons.payment_outlined),
+                            Text(
+                                Localization.of(context)
+                                    .getTranslatedValue("Dal Payment"),
+                                style: TextStyle(color: Colors.red),
+                                textScaleFactor: 1.2)),
+                      ],
+                    ),
 
-                  //fifth row
-                  Row(
-                    children: [
-                      CardWithImageAndText(
-                          IconButton(
-                              onPressed: () {
-                                Navigator.pushNamed(
-                                    context, BillerSPage.pageName);
-                              },
-                              icon: Icon(Icons.storefront_rounded,
-                                  color: Colors.red),
-                              iconSize: width / 4),
-                          Text(
-                              Localization.of(context)
-                                  .getTranslatedValue("Billers"),
-                              style: TextStyle(color: Colors.red),
-                              textScaleFactor: 1.2)),
-                      SizedBox(
-                        width: width - (2 * width / 2.01),
-                      ),
-                      CardWithImageAndText(
-                          IconButton(
-                              onPressed: () {
-                                Navigator.pushNamed(
-                                    context, EntertainmentPage.pageName);
-                              },
-                              icon: Icon(Icons.tag_faces_sharp,
-                                  color: Colors.red),
-                              iconSize: width / 4),
-                          Text(
-                              Localization.of(context)
-                                  .getTranslatedValue("Entertainment"),
-                              style: TextStyle(color: Colors.red),
-                              textScaleFactor: 1.2)),
-                    ],
-                  ),
-                ],
+                    //fifth row
+                    Row(
+                      mainAxisAlignment: rowAllignment,
+                      children: [
+                        CardWithImageAndText(
+                            CustomIconButton(() {
+                              Navigator.pushNamed(
+                                  context, BillerSPage.pageName);
+                            }, Icons.storefront_rounded),
+                            Text(
+                                Localization.of(context)
+                                    .getTranslatedValue("Billers"),
+                                style: TextStyle(color: Colors.red),
+                                textScaleFactor: 1.2)),
+                        CardWithImageAndText(
+                            CustomIconButton(() {
+                              Navigator.pushNamed(
+                                  context, EntertainmentPage.pageName);
+                            }, Icons.tag_faces_sharp),
+                            Text(
+                                Localization.of(context)
+                                    .getTranslatedValue("Entertainment"),
+                                style: TextStyle(color: Colors.red),
+                                textScaleFactor: 1.2)),
+                      ],
+                    ),
+                  ],
+                ),
               )
             ],
           )),

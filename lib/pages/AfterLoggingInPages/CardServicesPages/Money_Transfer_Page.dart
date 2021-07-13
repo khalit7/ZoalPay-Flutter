@@ -1,4 +1,5 @@
 import 'package:ZoalPay/Widgets/Card_With_Image_And_Text.dart';
+import 'package:ZoalPay/Widgets/custom_icon_button.dart';
 import 'package:ZoalPay/lang/Localization.dart';
 import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Money_Transfer_Pages/Transfer_Card_To_Card_Page.dart';
 import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Money_Transfer_Pages/Voucher_Page.dart';
@@ -22,15 +23,13 @@ class MoneyTransferPage extends StatelessWidget {
             children: [
               //first row
               Row(
+                mainAxisAlignment: rowAllignment,
                 children: [
                   CardWithImageAndText(
-                      IconButton(
-                          onPressed: () {
-                            Navigator.pushNamed(
-                                context, TransferCardToCardPage.pageName);
-                          },
-                          icon: Icon(Icons.person_add, color: Colors.red),
-                          iconSize: width / 3),
+                      CustomIconButton(() {
+                        Navigator.pushNamed(
+                            context, TransferCardToCardPage.pageName);
+                      }, Icons.person_add),
                       Text(
                           Localization.of(context)
                               .getTranslatedValue("Transfer Card to Card"),
@@ -40,14 +39,9 @@ class MoneyTransferPage extends StatelessWidget {
                     width: width - (2 * width / 2.01),
                   ),
                   CardWithImageAndText(
-                      IconButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, VoucherPage.pageName);
-                        },
-                        icon: Icon(Icons.card_giftcard_rounded,
-                            color: Colors.red),
-                        iconSize: width / 3,
-                      ),
+                      CustomIconButton(() {
+                        Navigator.pushNamed(context, VoucherPage.pageName);
+                      }, Icons.card_giftcard_rounded),
                       Text(
                         Localization.of(context).getTranslatedValue("Voucher"),
                         style: TextStyle(color: Colors.red),

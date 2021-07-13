@@ -1,4 +1,5 @@
 import 'package:ZoalPay/Widgets/Card_With_Image_And_Text.dart';
+import 'package:ZoalPay/Widgets/custom_icon_button.dart';
 import 'package:ZoalPay/lang/Localization.dart';
 import 'package:flutter/material.dart';
 import 'TelecomServicesPages/Bill_Payment_Page.dart';
@@ -22,16 +23,13 @@ class TelecomSevicesPage extends StatelessWidget {
               children: [
                 //first row
                 Row(
+                  mainAxisAlignment: rowAllignment,
                   children: [
                     CardWithImageAndText(
-                        IconButton(
-                            onPressed: () {
-                              Navigator.pushNamed(
-                                  context, MobileTopUpPage.pageName);
-                            },
-                            icon: Icon(Icons.phone_android_rounded,
-                                color: Colors.red),
-                            iconSize: width / 3),
+                        CustomIconButton(() {
+                          Navigator.pushNamed(
+                              context, MobileTopUpPage.pageName);
+                        }, Icons.phone_android_rounded),
                         Text(
                             Localization.of(context)
                                 .getTranslatedValue("Mobile TOPUP"),
@@ -41,14 +39,10 @@ class TelecomSevicesPage extends StatelessWidget {
                       width: width - (2 * width / 2.01),
                     ),
                     CardWithImageAndText(
-                        IconButton(
-                          onPressed: () {
-                            Navigator.pushNamed(
-                                context, BillPaymentPage.pageName);
-                          },
-                          icon: Icon(Icons.payments_sharp, color: Colors.red),
-                          iconSize: width / 3,
-                        ),
+                        CustomIconButton(() {
+                          Navigator.pushNamed(
+                              context, BillPaymentPage.pageName);
+                        }, Icons.payments_sharp),
                         Text(
                           Localization.of(context)
                               .getTranslatedValue("Bill Payment"),
@@ -60,16 +54,12 @@ class TelecomSevicesPage extends StatelessWidget {
 
                 //second row
                 Row(
+                  mainAxisAlignment: rowAllignment,
                   children: [
                     CardWithImageAndText(
-                        IconButton(
-                            onPressed: () {
-                              Navigator.pushNamed(
-                                  context, SudaniAdSlPage.pageName);
-                            },
-                            icon:
-                                Icon(Icons.monetization_on, color: Colors.red),
-                            iconSize: width / 3),
+                        CustomIconButton(() {
+                          Navigator.pushNamed(context, SudaniAdSlPage.pageName);
+                        }, Icons.monetization_on),
                         Text(
                             Localization.of(context)
                                 .getTranslatedValue("Sudani ADSL"),

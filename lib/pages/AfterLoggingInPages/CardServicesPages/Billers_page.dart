@@ -1,4 +1,5 @@
 import 'package:ZoalPay/Widgets/Card_With_Image_And_Text.dart';
+import 'package:ZoalPay/Widgets/custom_icon_button.dart';
 import 'package:ZoalPay/lang/Localization.dart';
 import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Billers_Pages/Mint_Payment_Page.dart';
 import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Billers_Pages/Safir_Page.dart';
@@ -22,28 +23,19 @@ class BillerSPage extends StatelessWidget {
             children: [
               //first row
               Row(
+                mainAxisAlignment: rowAllignment,
                 children: [
                   CardWithImageAndText(
-                      IconButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, SafirPage.pageName);
-                          },
-                          icon: Icon(Icons.star_half_sharp, color: Colors.red),
-                          iconSize: width / 3),
+                      CustomIconButton(() {
+                        Navigator.pushNamed(context, SafirPage.pageName);
+                      }, Icons.star_half_sharp),
                       Text(Localization.of(context).getTranslatedValue("Safir"),
                           style: TextStyle(color: Colors.red),
                           textScaleFactor: 1.2)),
-                  SizedBox(
-                    width: width - (2 * width / 2.01),
-                  ),
                   CardWithImageAndText(
-                      IconButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, TUTIAPage.pageName);
-                        },
-                        icon: Icon(Icons.turned_in, color: Colors.red),
-                        iconSize: width / 3,
-                      ),
+                      CustomIconButton(() {
+                        Navigator.pushNamed(context, TUTIAPage.pageName);
+                      }, Icons.turned_in),
                       Text(
                         Localization.of(context).getTranslatedValue("TUTIA"),
                         style: TextStyle(color: Colors.red),
@@ -54,24 +46,17 @@ class BillerSPage extends StatelessWidget {
 
               //second row
               Row(
+                mainAxisAlignment: rowAllignment,
                 children: [
                   CardWithImageAndText(
-                      IconButton(
-                          onPressed: () {
-                            Navigator.pushNamed(
-                                context, MintPaymentPage.pageName);
-                          },
-                          icon: Icon(Icons.move_to_inbox_outlined,
-                              color: Colors.red),
-                          iconSize: width / 3),
+                      CustomIconButton(() {
+                        Navigator.pushNamed(context, MintPaymentPage.pageName);
+                      }, Icons.move_to_inbox_outlined),
                       Text(
                           Localization.of(context)
                               .getTranslatedValue("Mint Payment"),
                           style: TextStyle(color: Colors.red),
                           textScaleFactor: 1.2)),
-                  SizedBox(
-                    width: width - (2 * width / 2.01),
-                  ),
                 ],
               ),
             ],

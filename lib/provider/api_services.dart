@@ -62,8 +62,8 @@ class ApiService {
       baseUrl: Constants.API_BASE_URL,
       contentType: Headers.jsonContentType,
       headers: {HttpHeaders.acceptHeader: Headers.jsonContentType},
-      connectTimeout: 90 * 1000, // 90 seconds
-      receiveTimeout: 90 * 1000));
+      connectTimeout: 45 * 1000, // 45 seconds
+      receiveTimeout: 45 * 1000));
 
   Future<void> sendOtp(String phoneNumber, otpType currentOtpType) async {
     String endPoint;
@@ -195,8 +195,8 @@ class ApiService {
     if (response.data.isEmpty) throw ApiExceptions.NoResponseFromEbs();
     print(response?.data["responseStatus"]);
     if (response?.data["responseStatus"] == "Failed")
-      throw ApiExceptions.parseEBSResponseJson(response.data);
-    return response.data["balance"]["available"];
+      throw ApiExceptions.parseAPIResponseToException(response.data);
+    return response.data["balance"]["available"].toString();
   }
 
   Future<List<PayeeModel>> getPayeeList() async {

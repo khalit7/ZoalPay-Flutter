@@ -1,4 +1,5 @@
 import 'package:ZoalPay/Widgets/Card_With_Image_And_Text.dart';
+import 'package:ZoalPay/Widgets/custom_icon_button.dart';
 import 'package:ZoalPay/lang/Localization.dart';
 import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/GovermentServicesPages/E-Invoice_page.dart';
 import 'package:flutter/material.dart';
@@ -25,15 +26,12 @@ class GovermentServices extends StatelessWidget {
             children: [
               //first row
               Row(
+                mainAxisAlignment: rowAllignment,
                 children: [
                   CardWithImageAndText(
-                      IconButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, Customs.pageName);
-                          },
-                          icon: Icon(Icons.supervisor_account_outlined,
-                              color: Colors.red),
-                          iconSize: width / 3),
+                      CustomIconButton(() {
+                        Navigator.pushNamed(context, Customs.pageName);
+                      }, Icons.supervisor_account_outlined),
                       Text(
                           Localization.of(context)
                               .getTranslatedValue("customsServices"),
@@ -43,14 +41,9 @@ class GovermentServices extends StatelessWidget {
                     width: width - (2 * width / 2.01),
                   ),
                   CardWithImageAndText(
-                      IconButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, E15.pageName);
-                        },
-                        icon: Icon(Icons.card_membership_sharp,
-                            color: Colors.red),
-                        iconSize: width / 3,
-                      ),
+                      CustomIconButton(() {
+                        Navigator.pushNamed(context, E15.pageName);
+                      }, Icons.card_membership_sharp),
                       Text(
                         Localization.of(context).getTranslatedValue("E15"),
                         style: TextStyle(color: Colors.red),
@@ -61,16 +54,12 @@ class GovermentServices extends StatelessWidget {
 
               //second row
               Row(
+                mainAxisAlignment: rowAllignment,
                 children: [
                   CardWithImageAndText(
-                      IconButton(
-                          onPressed: () {
-                            Navigator.pushNamed(
-                                context, HigherEducation.pageName);
-                          },
-                          icon:
-                              Icon(Icons.cast_for_education, color: Colors.red),
-                          iconSize: width / 3),
+                      CustomIconButton(() {
+                        Navigator.pushNamed(context, HigherEducation.pageName);
+                      }, Icons.cast_for_education),
                       Text(
                           Localization.of(context)
                               .getTranslatedValue("Higher Education"),
@@ -80,14 +69,9 @@ class GovermentServices extends StatelessWidget {
                     width: width - (2 * width / 2.01),
                   ),
                   CardWithImageAndText(
-                      IconButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, EInvoicePage.pageName);
-                        },
-                        icon:
-                            Icon(Icons.euro_symbol_rounded, color: Colors.red),
-                        iconSize: width / 3,
-                      ),
+                      CustomIconButton(() {
+                        Navigator.pushNamed(context, EInvoicePage.pageName);
+                      }, Icons.euro_symbol_rounded),
                       Text(
                         Localization.of(context)
                             .getTranslatedValue("E-Invoice"),

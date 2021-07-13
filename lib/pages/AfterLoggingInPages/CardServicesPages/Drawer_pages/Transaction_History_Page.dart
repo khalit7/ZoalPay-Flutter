@@ -26,6 +26,37 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
     displayedTransactions = widget.transactionsList;
   }
 
+  void displayTransactionDetails(TransactionModel transaction) {
+    if (!transaction.isSuccessful) return;
+    Map _pageDetails = {};
+    if (transaction.pan != null) _pageDetails["Card Number"] = transaction.pan;
+    if (transaction.date != null)
+      _pageDetails["Date"] = DateFormat.yMd().format(transaction.date);
+    if (transaction.number != null) _pageDetails["number"] = transaction.number;
+    if (transaction.comment != null)
+      _pageDetails["Comment"] = transaction.comment;
+    if (transaction.voucherCode != null)
+      _pageDetails["Voucher Code"] = transaction.voucherCode;
+    if (transaction.reciverCard != null)
+      _pageDetails["To Card"] = concealCardNumber(transaction.reciverCard);
+    if (transaction.customerName != null)
+      _pageDetails["customer Name"] = transaction.customerName;
+    if (transaction.token != null) _pageDetails["token"] = transaction.token;
+    if (transaction.meterNumber != null)
+      _pageDetails["Meter Number"] = transaction.meterNumber;
+    if (transaction.waterFees != null)
+      _pageDetails["water Fees"] = transaction.waterFees;
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => TransactionReceipt(
+                  subTitle: transaction.type,
+                  transactionValue: beautifyTransactionAmount(
+                      transaction.transactionAmount.toString()),
+                  pageDetails: _pageDetails,
+                )));
+  }
+
   build(context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
@@ -46,64 +77,32 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
           Expanded(
             child: ListView(
               children: displayedTransactions
-                  .map((transaction) => Container(
-                        child: ListTile(
-                          leading: transaction.transactionIcon,
-                          title: Text(transaction.type),
-                          subtitle: Text(
-                            transaction.responseMessage +
-                                "\n" +
-                                DateFormat.yMd().format(transaction.date),
+                  .map((transaction) => Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Material(
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                          elevation: 2,
+                          child: ListTile(
+                            leading: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                transaction.transactionIcon,
+                              ],
+                            ),
+                            title: Text(transaction.type),
+                            subtitle: Text(
+                              transaction.responseMessage +
+                                  "\n" +
+                                  DateFormat.yMd().format(transaction.date),
+                            ),
+                            isThreeLine: true,
+                            trailing: _transactionStatusIcon(
+                                transaction, width, height),
+                            onTap: () {
+                              displayTransactionDetails(transaction);
+                            },
                           ),
-                          isThreeLine: true,
-                          trailing: _transactionStatusIcon(
-                              transaction, width, height),
-                          onTap: () {
-                            if (!transaction.isSuccessful) return;
-                            Map _pageDetails = {};
-                            if (transaction.pan != null)
-                              _pageDetails["Card Number"] = transaction.pan;
-                            if (transaction.date != null)
-                              _pageDetails["Date"] =
-                                  DateFormat.yMd().format(transaction.date);
-                            if (transaction.number != null)
-                              _pageDetails["number"] = transaction.number;
-                            if (transaction.comment != null)
-                              _pageDetails["Comment"] = transaction.comment;
-                            if (transaction.voucherCode != null)
-                              _pageDetails["Voucher Code"] =
-                                  transaction.voucherCode;
-                            if (transaction.reciverCard != null)
-                              _pageDetails["To Card"] =
-                                  concealCardNumber(transaction.reciverCard);
-                            if (transaction.customerName != null)
-                              _pageDetails["customer Name"] =
-                                  transaction.customerName;
-                            if (transaction.token != null)
-                              _pageDetails["token"] = transaction.token;
-                            if (transaction.meterNumber != null)
-                              _pageDetails["Meter Number"] =
-                                  transaction.meterNumber;
-                            if (transaction.waterFees != null)
-                              _pageDetails["water Fees"] =
-                                  transaction.waterFees;
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => TransactionReceipt(
-                                          subTitle: transaction.type,
-                                          transactionValue:
-                                              beautifyTransactionAmount(
-                                                  transaction.transactionAmount
-                                                      .toString()),
-                                          pageDetails: _pageDetails,
-                                        )));
-                            ;
-                          },
                         ),
-                        decoration: BoxDecoration(
-                            border: Border(
-                                bottom: BorderSide(color: Colors.black26))),
                       ))
                   .toList(),
             ),
