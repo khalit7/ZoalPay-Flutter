@@ -18,33 +18,48 @@ class HomePage extends StatelessWidget {
         // appBar: appBar,
         body: Stack(
       children: [
+        // Positioned(
+        //     left: 0,
+        //     right: 0,
+        //     top: 0,
+        //     bottom: height / 1.65,
+        //     child: Image.asset(
+        //       "assets/images/ZoalPayImage.png",
+        //     )),
+        // Positioned(
+        //   left: (width / 2) - ((width * height / 6000)),
+        //   right: (width / 2) - ((width * height / 6000)),
+        //   top: (height / 2) - (width * height / 2000),
+        //   bottom: (height / 2),
+        //   child: Column(
+        //     children: [
+        //       Card(
+        //         child: Image.asset("assets/images/zoalPayLogo.png"),
+        //         color: Colors.redAccent,
+        //         shape: RoundedRectangleBorder(
+        //             borderRadius: BorderRadius.circular(10)),
+        //       ),
+        //       Text("ZoalPay",
+        //           textScaleFactor: 1.12,
+        //           style: TextStyle(fontWeight: FontWeight.bold))
+        //     ],
+        //   ),
+        // ),
         Positioned(
             left: 0,
-            right: 0,
+            right: -30,
             top: 0,
-            bottom: height / 1.65,
-            child: Image.asset(
-              "assets/images/ZoalPayImage.png",
+            height: height / 1.25,
+            child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(width * height / 20000),
+                      bottomRight: Radius.circular(width * height / 10000)),
+                  image: DecorationImage(
+                      image:
+                          AssetImage("assets/images/home_page_background.png"),
+                      fit: BoxFit.fill)),
             )),
-        Positioned(
-          left: (width / 2) - ((width * height / 6000)),
-          right: (width / 2) - ((width * height / 6000)),
-          top: (height / 2) - (width * height / 2000),
-          bottom: (height / 2),
-          child: Column(
-            children: [
-              Card(
-                child: Image.asset("assets/images/zoalPayLogo.png"),
-                color: Colors.redAccent,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-              ),
-              Text("ZoalPay",
-                  textScaleFactor: 1.12,
-                  style: TextStyle(fontWeight: FontWeight.bold))
-            ],
-          ),
-        ),
         Positioned(
           left: (width / 2) - ((width * height / 1500) / 2),
           right: (width / 2) - ((width * height / 1500) / 2),
@@ -53,11 +68,16 @@ class HomePage extends StatelessWidget {
           child: Container(
             child: Column(
               children: [
-                CustomFlatButton1(width, height,
-                    Localization.of(context).getTranslatedValue("Login"), () {
-                  Navigator.pushNamed(context, LoginPage.pageName);
-                }, 1000, 18.0),
-                CustomFlatButton2(
+                FlatButton(
+                    minWidth: width * height / 5,
+                    color: Colors.white,
+                    textColor: Colors.black,
+                    onPressed: () {
+                      Navigator.pushNamed(context, LoginPage.pageName);
+                    },
+                    child: Text(
+                        Localization.of(context).getTranslatedValue("Login"))),
+                CustomFlatButton1(
                     width,
                     height,
                     Localization.of(context)
