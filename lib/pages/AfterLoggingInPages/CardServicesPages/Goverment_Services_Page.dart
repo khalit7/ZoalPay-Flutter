@@ -28,27 +28,20 @@ class GovermentServices extends StatelessWidget {
               Row(
                 mainAxisAlignment: rowAllignment,
                 children: [
-                  CardWithImageAndText(
-                      CustomIconButton(() {
-                        Navigator.pushNamed(context, Customs.pageName);
-                      }, Icons.supervisor_account_outlined),
-                      Text(
-                          Localization.of(context)
-                              .getTranslatedValue("customsServices"),
-                          style: TextStyle(color: Colors.red),
-                          textScaleFactor: 1.2)),
-                  SizedBox(
-                    width: width - (2 * width / 2.01),
+                  ServiceWidget(
+                    imageName: "biller.png",
+                    text: "customsServices",
+                    onpressed: () {
+                      Navigator.pushNamed(context, Customs.pageName);
+                    },
                   ),
-                  CardWithImageAndText(
-                      CustomIconButton(() {
-                        Navigator.pushNamed(context, E15.pageName);
-                      }, Icons.card_membership_sharp),
-                      Text(
-                        Localization.of(context).getTranslatedValue("E15"),
-                        style: TextStyle(color: Colors.red),
-                        textScaleFactor: 1.2,
-                      )),
+                  ServiceWidget(
+                    imageName: "e15.png",
+                    text: "E15",
+                    onpressed: () {
+                      Navigator.pushNamed(context, E15.pageName);
+                    },
+                  ),
                 ],
               ),
 
@@ -56,28 +49,20 @@ class GovermentServices extends StatelessWidget {
               Row(
                 mainAxisAlignment: rowAllignment,
                 children: [
-                  CardWithImageAndText(
-                      CustomIconButton(() {
-                        Navigator.pushNamed(context, HigherEducation.pageName);
-                      }, Icons.cast_for_education),
-                      Text(
-                          Localization.of(context)
-                              .getTranslatedValue("Higher Education"),
-                          style: TextStyle(color: Colors.red),
-                          textScaleFactor: 1.2)),
-                  SizedBox(
-                    width: width - (2 * width / 2.01),
+                  ServiceWidget(
+                    imageName: "education.png",
+                    text: "Higher Education",
+                    onpressed: () {
+                      Navigator.pushNamed(context, HigherEducation.pageName);
+                    },
                   ),
-                  CardWithImageAndText(
-                      CustomIconButton(() {
-                        Navigator.pushNamed(context, EInvoicePage.pageName);
-                      }, Icons.euro_symbol_rounded),
-                      Text(
-                        Localization.of(context)
-                            .getTranslatedValue("E-Invoice"),
-                        style: TextStyle(color: Colors.red),
-                        textScaleFactor: 1.2,
-                      ))
+                  ServiceWidget(
+                    imageName: "e invoice.png",
+                    text: "E-Invoice",
+                    onpressed: () {
+                      Navigator.pushNamed(context, EInvoicePage.pageName);
+                    },
+                  ),
                 ],
               ),
             ],

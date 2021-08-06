@@ -25,28 +25,21 @@ class MoneyTransferPage extends StatelessWidget {
               Row(
                 mainAxisAlignment: rowAllignment,
                 children: [
-                  CardWithImageAndText(
-                      CustomIconButton(() {
-                        Navigator.pushNamed(
-                            context, TransferCardToCardPage.pageName);
-                      }, Icons.person_add),
-                      Text(
-                          Localization.of(context)
-                              .getTranslatedValue("Transfer Card to Card"),
-                          style: TextStyle(color: Colors.red),
-                          textScaleFactor: 1.2)),
-                  SizedBox(
-                    width: width - (2 * width / 2.01),
+                  ServiceWidget(
+                    imageName: "card to card.png",
+                    text: "Transfer Card to Card",
+                    onpressed: () {
+                      Navigator.pushNamed(
+                          context, TransferCardToCardPage.pageName);
+                    },
                   ),
-                  CardWithImageAndText(
-                      CustomIconButton(() {
-                        Navigator.pushNamed(context, VoucherPage.pageName);
-                      }, Icons.card_giftcard_rounded),
-                      Text(
-                        Localization.of(context).getTranslatedValue("Voucher"),
-                        style: TextStyle(color: Colors.red),
-                        textScaleFactor: 1.2,
-                      )),
+                  ServiceWidget(
+                    imageName: "voucher1.png",
+                    text: "Voucher",
+                    onpressed: () {
+                      Navigator.pushNamed(context, VoucherPage.pageName);
+                    },
+                  ),
                 ],
               ),
             ],

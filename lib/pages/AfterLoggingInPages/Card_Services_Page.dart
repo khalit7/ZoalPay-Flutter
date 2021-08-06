@@ -48,134 +48,112 @@ class CardServicesPage extends StatelessWidget {
                     Row(
                       mainAxisAlignment: rowAllignment,
                       children: [
-                        CardWithImageAndText(
-                            CustomIconButton(() {
-                              Navigator.pushNamed(
-                                  context, ScanAndPayPage.pageName);
-                            }, Icons.scanner),
-                            Text(
-                                Localization.of(context)
-                                    .getTranslatedValue("Scan & Pay"),
-                                style: TextStyle(color: Colors.red),
-                                textScaleFactor: 1.2)),
-                        CardWithImageAndText(
-                            CustomIconButton(() {
-                              Navigator.pushNamed(context, QRPage.pageName);
-                            }, Icons.crop_free_rounded),
-                            Text(
-                              Localization.of(context)
-                                  .getTranslatedValue("My QR"),
-                              style: TextStyle(color: Colors.red),
-                              textScaleFactor: 1.2,
-                            )),
+                        ServiceWidget(
+                          imageName: 'scan.png',
+                          text: "Scan & Pay",
+                          onpressed: () {
+                            Navigator.pushNamed(
+                                context, ScanAndPayPage.pageName);
+                          },
+                        ),
+                        ServiceWidget(
+                          imageName: 'qr.png',
+                          text: "My QR",
+                          onpressed: () {
+                            Navigator.pushNamed(context, QRPage.pageName);
+                          },
+                        ),
                       ],
                     ),
 
-                    //second row
+                    // //second row
                     Row(
                       mainAxisAlignment: rowAllignment,
                       children: [
-                        CardWithImageAndText(
-                            CustomIconButton(() {
-                              Navigator.pushNamed(
-                                  context, TelecomSevicesPage.pageName);
-                            }, Icons.phone),
-                            Text(
-                                Localization.of(context)
-                                    .getTranslatedValue("Telecom Services"),
-                                style: TextStyle(color: Colors.red),
-                                textScaleFactor: 1.2)),
-                        CardWithImageAndText(
-                            CustomIconButton(() {
-                              Navigator.pushNamed(
-                                  context, ElectricityServicesPage.pageName);
-                            }, Icons.bolt),
-                            Text(
-                                Localization.of(context)
-                                    .getTranslatedValue("Electricity Services"),
-                                style: TextStyle(color: Colors.red),
-                                textScaleFactor: 1.2)),
+                        ServiceWidget(
+                          imageName: "telecom.png",
+                          text: "Telecom Services",
+                          onpressed: () {
+                            Navigator.pushNamed(
+                                context, TelecomSevicesPage.pageName);
+                          },
+                        ),
+                        ServiceWidget(
+                          imageName: "elec.png",
+                          text: "Electricity Services",
+                          onpressed: () {
+                            Navigator.pushNamed(
+                                context, ElectricityServicesPage.pageName);
+                          },
+                        )
                       ],
                     ),
 
-                    //third row
+                    // //third row
                     Row(
                       mainAxisAlignment: rowAllignment,
                       children: [
-                        CardWithImageAndText(
-                            CustomIconButton(() {
-                              Navigator.pushNamed(
-                                  context, GovermentServices.pageName);
-                            }, Icons.work),
-                            Text(
-                                Localization.of(context)
-                                    .getTranslatedValue("Goverment Services"),
-                                style: TextStyle(color: Colors.red),
-                                textScaleFactor: 1.2)),
-                        CardWithImageAndText(
-                            CustomIconButton(() {
-                              Navigator.pushNamed(
-                                  context, MoneyTransferPage.pageName);
-                            }, Icons.attach_money),
-                            Text(
-                                Localization.of(context)
-                                    .getTranslatedValue("Money Transfer"),
-                                style: TextStyle(color: Colors.red),
-                                textScaleFactor: 1.2)),
+                        ServiceWidget(
+                          imageName: "gov.png",
+                          text: "Goverment Services",
+                          onpressed: () {
+                            Navigator.pushNamed(
+                                context, GovermentServices.pageName);
+                          },
+                        ),
+                        ServiceWidget(
+                          imageName: "money-transfer.png",
+                          text: "Money Transfer",
+                          onpressed: () {
+                            Navigator.pushNamed(
+                                context, MoneyTransferPage.pageName);
+                          },
+                        ),
                       ],
                     ),
 
-                    //fourth row
+                    // //fourth row
                     Row(
                       mainAxisAlignment: rowAllignment,
                       children: [
-                        CardWithImageAndText(
-                            CustomIconButton(() {
-                              Navigator.pushNamed(
-                                  context, ZoalKhairPage.pageName);
-                            }, Icons.volunteer_activism),
-                            Text(
-                                Localization.of(context)
-                                    .getTranslatedValue("Zoal Khair"),
-                                style: TextStyle(color: Colors.red),
-                                textScaleFactor: 1.2)),
-                        CardWithImageAndText(
-                            CustomIconButton(() {
-                              Navigator.pushNamed(
-                                  context, DalPaymentPage.pageName);
-                            }, Icons.payment_outlined),
-                            Text(
-                                Localization.of(context)
-                                    .getTranslatedValue("Dal Payment"),
-                                style: TextStyle(color: Colors.red),
-                                textScaleFactor: 1.2)),
+                        ServiceWidget(
+                          imageName: "charity.png",
+                          text: "Zoal Khair",
+                          onpressed: () {
+                            Navigator.pushNamed(
+                                context, ZoalKhairPage.pageName);
+                          },
+                        ),
+                        ServiceWidget(
+                          imageName: "e15.png",
+                          text: "Dal Payment",
+                          onpressed: () {
+                            Navigator.pushNamed(
+                                context, DalPaymentPage.pageName);
+                          },
+                        ),
                       ],
                     ),
 
-                    //fifth row
+                    // //fifth row
                     Row(
                       mainAxisAlignment: rowAllignment,
                       children: [
-                        CardWithImageAndText(
-                            CustomIconButton(() {
-                              Navigator.pushNamed(
-                                  context, BillerSPage.pageName);
-                            }, Icons.storefront_rounded),
-                            Text(
-                                Localization.of(context)
-                                    .getTranslatedValue("Billers"),
-                                style: TextStyle(color: Colors.red),
-                                textScaleFactor: 1.2)),
-                        CardWithImageAndText(
-                            CustomIconButton(() {
-                              Navigator.pushNamed(
-                                  context, EntertainmentPage.pageName);
-                            }, Icons.tag_faces_sharp),
-                            Text(
-                                Localization.of(context)
-                                    .getTranslatedValue("Entertainment"),
-                                style: TextStyle(color: Colors.red),
-                                textScaleFactor: 1.2)),
+                        ServiceWidget(
+                          imageName: "billers.png",
+                          text: "Billers",
+                          onpressed: () {
+                            Navigator.pushNamed(context, BillerSPage.pageName);
+                          },
+                        ),
+                        ServiceWidget(
+                          imageName: "Entertainment.png",
+                          text: "Entertainment",
+                          onpressed: () {
+                            Navigator.pushNamed(
+                                context, EntertainmentPage.pageName);
+                          },
+                        ),
                       ],
                     ),
                   ],

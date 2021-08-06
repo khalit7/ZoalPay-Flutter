@@ -25,22 +25,20 @@ class BillerSPage extends StatelessWidget {
               Row(
                 mainAxisAlignment: rowAllignment,
                 children: [
-                  CardWithImageAndText(
-                      CustomIconButton(() {
-                        Navigator.pushNamed(context, SafirPage.pageName);
-                      }, Icons.star_half_sharp),
-                      Text(Localization.of(context).getTranslatedValue("Safir"),
-                          style: TextStyle(color: Colors.red),
-                          textScaleFactor: 1.2)),
-                  CardWithImageAndText(
-                      CustomIconButton(() {
-                        Navigator.pushNamed(context, TUTIAPage.pageName);
-                      }, Icons.turned_in),
-                      Text(
-                        Localization.of(context).getTranslatedValue("TUTIA"),
-                        style: TextStyle(color: Colors.red),
-                        textScaleFactor: 1.2,
-                      )),
+                  ServiceWidget(
+                    imageName: "voucher1.png",
+                    text: "Safir",
+                    onpressed: () {
+                      Navigator.pushNamed(context, SafirPage.pageName);
+                    },
+                  ),
+                  ServiceWidget(
+                    imageName: "e invoice.png",
+                    text: "TUTIA",
+                    onpressed: () {
+                      Navigator.pushNamed(context, TUTIAPage.pageName);
+                    },
+                  ),
                 ],
               ),
 
@@ -48,15 +46,13 @@ class BillerSPage extends StatelessWidget {
               Row(
                 mainAxisAlignment: rowAllignment,
                 children: [
-                  CardWithImageAndText(
-                      CustomIconButton(() {
-                        Navigator.pushNamed(context, MintPaymentPage.pageName);
-                      }, Icons.move_to_inbox_outlined),
-                      Text(
-                          Localization.of(context)
-                              .getTranslatedValue("Mint Payment"),
-                          style: TextStyle(color: Colors.red),
-                          textScaleFactor: 1.2)),
+                  ServiceWidget(
+                    imageName: "e15.png",
+                    text: "Mint Payment",
+                    onpressed: () {
+                      Navigator.pushNamed(context, MintPaymentPage.pageName);
+                    },
+                  ),
                 ],
               ),
             ],

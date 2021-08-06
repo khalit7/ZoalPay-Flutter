@@ -18,53 +18,41 @@ class TelecomSevicesPage extends StatelessWidget {
                 .getTranslatedValue("Telecom Services"))),
         body: Stack(
           children: [
-            Container(color: Colors.grey[200]),
+            // Container(color: Colors.grey[200]),
             ListView(
               children: [
-                //first row
+                //     //first row
                 Row(
                   mainAxisAlignment: rowAllignment,
                   children: [
-                    CardWithImageAndText(
-                        CustomIconButton(() {
-                          Navigator.pushNamed(
-                              context, MobileTopUpPage.pageName);
-                        }, Icons.phone_android_rounded),
-                        Text(
-                            Localization.of(context)
-                                .getTranslatedValue("Mobile TOPUP"),
-                            style: TextStyle(color: Colors.red),
-                            textScaleFactor: 1.2)),
-                    SizedBox(
-                      width: width - (2 * width / 2.01),
+                    ServiceWidget(
+                      imageName: "Mobile bill.png",
+                      text: "Mobile TOPUP",
+                      onpressed: () {
+                        Navigator.pushNamed(context, MobileTopUpPage.pageName);
+                      },
                     ),
-                    CardWithImageAndText(
-                        CustomIconButton(() {
-                          Navigator.pushNamed(
-                              context, BillPaymentPage.pageName);
-                        }, Icons.payments_sharp),
-                        Text(
-                          Localization.of(context)
-                              .getTranslatedValue("Bill Payment"),
-                          style: TextStyle(color: Colors.red),
-                          textScaleFactor: 1.2,
-                        )),
+                    ServiceWidget(
+                      imageName: "e invoice.png",
+                      text: "Bill Payment",
+                      onpressed: () {
+                        Navigator.pushNamed(context, BillPaymentPage.pageName);
+                      },
+                    ),
                   ],
                 ),
 
-                //second row
+                //     //second row
                 Row(
                   mainAxisAlignment: rowAllignment,
                   children: [
-                    CardWithImageAndText(
-                        CustomIconButton(() {
-                          Navigator.pushNamed(context, SudaniAdSlPage.pageName);
-                        }, Icons.monetization_on),
-                        Text(
-                            Localization.of(context)
-                                .getTranslatedValue("Sudani ADSL"),
-                            style: TextStyle(color: Colors.red),
-                            textScaleFactor: 1.2)),
+                    ServiceWidget(
+                      imageName: "adsl.png",
+                      text: "Sudani ADSL",
+                      onpressed: () {
+                        Navigator.pushNamed(context, SudaniAdSlPage.pageName);
+                      },
+                    ),
                   ],
                 ),
               ],
