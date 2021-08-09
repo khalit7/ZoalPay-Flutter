@@ -1,6 +1,7 @@
 import 'package:ZoalPay/Widgets/Custom_Drawer.dart';
 import 'package:ZoalPay/Widgets/Loading_widget.dart';
 import 'package:ZoalPay/Widgets/Submit_Button.dart';
+import 'package:ZoalPay/Widgets/error_widgets.dart';
 import 'package:ZoalPay/lang/Localization.dart';
 import 'package:ZoalPay/models/card_model.dart';
 import 'package:ZoalPay/pages/AfterLoggingInPages/CardServicesPages/Scan_&_Pay_Page.dart';
@@ -12,16 +13,28 @@ import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ConfirmTransferPage extends StatelessWidget {
+class ConfirmTransferPage extends StatefulWidget {
   static final pageName = "ConfirmTransferPage";
-  CardModel selectedCard;
-  var _senderCardNameController = TextEditingController();
-  var _amountController = TextEditingController();
-  var _commentController = TextEditingController();
-  var _ipinController = TextEditingController();
   Map<String, String> cardDetails;
 
   ConfirmTransferPage({this.cardDetails});
+
+  @override
+  _ConfirmTransferPageState createState() => _ConfirmTransferPageState();
+}
+
+class _ConfirmTransferPageState extends State<ConfirmTransferPage> {
+  CardModel selectedCard;
+
+  var _senderCardNameController = TextEditingController();
+
+  var _amountController = TextEditingController();
+
+  var _commentController = TextEditingController();
+
+  var _ipinController = TextEditingController();
+
+  bool _validate = false;
 
   build(context) {
     var width = MediaQuery.of(context).size.width;
@@ -45,26 +58,26 @@ class ConfirmTransferPage extends StatelessWidget {
             height: width * height / 5000,
           ),
           // card details
-          ListView(
-              children: cardDetails.entries
-                  .map(
-                    (iteam) => Padding(
-                      padding: EdgeInsets.fromLTRB(
-                          width * height / 7000, 0, width * height / 7000, 0),
-                      child: Container(
-                        child: ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          title: Text(Localization.of(context)
-                              .getTranslatedValue(iteam.key)),
-                          trailing: Text("${iteam.value}"),
-                        ),
-                        decoration: BoxDecoration(
-                            border: Border(
-                                bottom: BorderSide(color: Colors.black26))),
-                      ),
+
+          ...widget.cardDetails.entries
+              .map(
+                (iteam) => Padding(
+                  padding: EdgeInsets.fromLTRB(
+                      width * height / 7000, 0, width * height / 7000, 0),
+                  child: Container(
+                    child: ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(Localization.of(context)
+                          .getTranslatedValue(iteam.key)),
+                      trailing: Text("${iteam.value}"),
                     ),
-                  )
-                  .toList()),
+                    decoration: BoxDecoration(
+                        border:
+                            Border(bottom: BorderSide(color: Colors.black26))),
+                  ),
+                ),
+              )
+              .toList(),
           //
           Divider(
             color: Colors.black,
@@ -93,6 +106,8 @@ class ConfirmTransferPage extends StatelessWidget {
                     fontWeight: FontWeight.w300,
                   ),
                   decoration: InputDecoration(
+                      errorText:
+                          selectedCard == null ? "Please select a card" : null,
                       labelText: Localization.of(context)
                           .getTranslatedValue("Card Number"),
                       suffixIcon: PopupMenuButton<CardModel>(
@@ -144,6 +159,9 @@ class ConfirmTransferPage extends StatelessWidget {
                     fontWeight: FontWeight.w300,
                   ),
                   decoration: InputDecoration(
+                    errorText: _validate
+                        ? amountValidError(_amountController.text.trim())
+                        : null,
                     labelText:
                         Localization.of(context).getTranslatedValue("Amount"),
                   ),
@@ -196,6 +214,9 @@ class ConfirmTransferPage extends StatelessWidget {
                     fontWeight: FontWeight.w300,
                   ),
                   decoration: InputDecoration(
+                    errorText: _validate
+                        ? iPinValidError(_ipinController.text.trim())
+                        : null,
                     labelText:
                         Localization.of(context).getTranslatedValue("IPIN"),
                   ),
@@ -208,24 +229,19 @@ class ConfirmTransferPage extends StatelessWidget {
           ),
           SubmitButton(() async {
             // validate everything
-            if (selectedCard == null) {
-              // TODO:notify user to select a card
-              print("please select a card");
-              // } else if (!isAmountValid(_amountController.text.trim())) {
-              //   print(_amountController.text.trim());
-              //   //TODO: notify user to enter valid amount
-              //   print("Please enter a valid amount ");
-              // } else if (!isIpinValid(_ipinController.text.trim())) {
-              //   //TODO: notify user to enter a valid IPIN
-              //   print("please enter a valid IPIN");
-              // } else {
+            setState(() {
+              _validate = true;
+            });
+            if (selectedCard != null &&
+                isAmountValid(_amountController.text.trim()) &&
+                isIpinValid(_ipinController.text.trim())) {
               // attempt transaction
               try {
                 showLoadingDialog(context);
 
                 await context.read<ApiService>().cardTransfer(
                     selectedCard,
-                    cardDetails["Account No"],
+                    widget.cardDetails["Account No"],
                     _ipinController.text.trim(),
                     int.parse(_amountController.text.trim()),
                     _commentController.text.trim());
@@ -244,7 +260,7 @@ class ConfirmTransferPage extends StatelessWidget {
                                     concealCardNumber(selectedCard.cardNumber),
                                 "Amount": _amountController.text.trim(),
                                 "To Card": concealCardNumber(
-                                    cardDetails["Account No"]),
+                                    widget.cardDetails["Account No"]),
                                 "Date": date,
                                 "Comment": _commentController.text.trim()
                               },
@@ -252,9 +268,8 @@ class ConfirmTransferPage extends StatelessWidget {
               } catch (e) {
                 //remove loading screen
                 Navigator.pop(context);
-                //TODO:notify user that somthing went wrong
-                print(e);
-                print("somthing went wrong");
+                showErrorWidget(
+                    context, "Somthing went wrong, please try again later");
               }
             }
           })

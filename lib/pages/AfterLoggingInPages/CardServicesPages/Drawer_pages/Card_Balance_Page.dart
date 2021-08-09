@@ -152,8 +152,8 @@ class _CardBalancePageState extends State<CardBalancePage> {
                               subTitle: "Balance",
                               transactionValue: balance,
                               pageDetails: {
-                                "Card Number": concealCardNumber(
-                                    _cardNameController.text.trim()),
+                                "Card Number":
+                                    concealCardNumber(selectedCard.cardNumber),
                                 "Date": date
                               },
                             )));

@@ -281,6 +281,9 @@ class ApiService {
         paymentInfo = "REFERENCE=" +
             "$number"; // TODO: change REFEREBCE to the correct string
         break;
+      case paymentType.customPayment:
+        paymentInfo = ""; // TODO: change to correct string
+        break;
       default:
         break;
     }

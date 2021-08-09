@@ -97,12 +97,18 @@ class CustomDrawer extends StatelessWidget {
             // Card Deatails
             ListTile(
               onTap: () async {
-                showLoadingDialog(context);
-                CardModel.allCards =
-                    await Provider.of<ApiService>(context, listen: false)
-                        .getAllCards();
+                try {
+                  showLoadingDialog(context);
+                  CardModel.allCards =
+                      await Provider.of<ApiService>(context, listen: false)
+                          .getAllCards();
 
-                Navigator.popAndPushNamed(context, CardDetailsPage.pageName);
+                  Navigator.popAndPushNamed(context, CardDetailsPage.pageName);
+                } catch (e) {
+                  Navigator.pop(context);
+                  showErrorWidget(
+                      context, "somthing went wrong, please try again later");
+                }
               },
               leading:
                   Icon(Icons.add_to_home_screen_sharp, color: Colors.white),

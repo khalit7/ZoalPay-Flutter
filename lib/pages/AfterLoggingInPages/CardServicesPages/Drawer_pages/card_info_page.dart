@@ -188,41 +188,27 @@ class _CardInfoPageState extends State<CardInfoPage> {
       children: [
         //account balance
         SizedBox(
-          height: width * height / (1300 * 6),
+          height: height / 30,
         ),
         Padding(
           padding: EdgeInsets.fromLTRB(width / 4, 0, 0, 0),
           child: ListTile(
-            title: Text("Account Balance",
-                style: TextStyle(
-                    color: cardDetailsColor, fontSize: height * width / 40000)),
+            title: Text("Account Balance : ",
+                style:
+                    TextStyle(color: cardDetailsColor, fontSize: height / 80)),
             subtitle: Text("${beautifyTransactionAmount(_balance)}",
-                style: TextStyle(
-                    color: Colors.black, fontSize: height * width / 20000)),
+                style: TextStyle(color: Colors.black, fontSize: height / 40)),
           ),
-        ),
-        SizedBox(
-          height: width * height / (1300 * 12),
-        ),
-        //divider
-        Divider(
-          indent: width / 50,
-          endIndent: width / 50,
-          color: Colors.grey,
-        ),
-        SizedBox(
-          height: width * height / (1300 * 12),
         ),
         // date
         Padding(
           padding: EdgeInsets.fromLTRB(width / 4, 0, 0, 0),
           child: ListTile(
-            title: Text("Date",
-                style: TextStyle(
-                    color: cardDetailsColor, fontSize: height * width / 40000)),
+            title: Text("Date : ",
+                style:
+                    TextStyle(color: cardDetailsColor, fontSize: height / 80)),
             subtitle: Text(DateFormat.yMMMMEEEEd().format(DateTime.now()),
-                style: TextStyle(
-                    color: Colors.black, fontSize: height * width / 35000)),
+                style: TextStyle(color: Colors.black, fontSize: height / 40)),
           ),
         ),
       ],
@@ -335,7 +321,7 @@ class _CardInfoPageState extends State<CardInfoPage> {
                         bottomRight: Radius.circular(30)),
                     image: DecorationImage(
                         image: AssetImage("assets/images/background2.png"),
-                        fit: BoxFit.fitHeight)),
+                        fit: BoxFit.fill)),
               )),
           // the credit card image
           Positioned(

@@ -58,7 +58,10 @@ class _ZoalKhairPageState extends State<ZoalKhairPage> {
                   width: width - (width / 15),
                   child: TextField(
                     controller: _cardNameController,
-                    onChanged: (string) {},
+                    onChanged: (value) {
+                      _cardNameController.text =
+                          selectedCard.cardUserName ?? "";
+                    },
                     onSubmitted: (string) {},
                     style: TextStyle(
                       fontWeight: FontWeight.w300,

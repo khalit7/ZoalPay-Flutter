@@ -102,9 +102,9 @@ class _TransferCardToCardPageState extends State<TransferCardToCardPage> {
               try {
                 showLoadingDialog(context);
                 Map<String, String> receiver_card_details = {
-                  "Account No": "1234",
-                  "Name": "khalid adil",
-                  "Bank": "Bank of Khartoum",
+                  "Account No": "${_reciverCardNumberController.text.trim()}",
+                  "Name": "couldn't verfy name",
+                  "Bank": "couldn't verfy bank",
                 };
 
                 // make the call

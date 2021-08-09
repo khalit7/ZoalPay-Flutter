@@ -42,3 +42,11 @@ PayeeModel dalPayeeModel =
 
 PayeeModel e15PayeeModel =
     PayeeModel.allPayees.firstWhere((payee) => payee.payeeName == "E15");
+
+PayeeModel safirPayeeModel =
+    PayeeModel(payeeName: "Safir", payeeId: "0010050263");
+
+PayeeModel tutiaPayeeModel =
+    PayeeModel(payeeName: "TUTIA", payeeId: "0010050304");
+
+PayeeModel mintPayeeModel = PayeeModel(payeeName: "MINT PAYMENT", payeeId: "");

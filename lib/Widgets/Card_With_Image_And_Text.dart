@@ -12,8 +12,8 @@ class ServiceWidget extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.fromLTRB(0, width / 36, 0, width / 36),
       child: Container(
-        width: width / 3.5,
-        height: width / 3.5,
+        width: width / 2.5,
+        height: width / 2.5,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(20.0)),
           color: Colors.white,
@@ -36,12 +36,14 @@ class ServiceWidget extends StatelessWidget {
               ImageIcon(
                 AssetImage("assets/icons/" + imageName),
                 color: Colors.red,
-                size: width / 12,
+                size: width / 7,
               ),
-              Text(
-                Localization.of(context).getTranslatedValue(text),
-                textScaleFactor: 1.3,
-                style: TextStyle(color: Colors.red),
+              Center(
+                child: Text(
+                  Localization.of(context).getTranslatedValue(text),
+                  textScaleFactor: 1.1,
+                  style: TextStyle(color: Colors.red),
+                ),
               )
             ],
           ),

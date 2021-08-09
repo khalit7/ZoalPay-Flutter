@@ -1,15 +1,35 @@
 import 'package:ZoalPay/Widgets/Custom_Drawer.dart';
+import 'package:ZoalPay/Widgets/Loading_widget.dart';
 import 'package:ZoalPay/Widgets/Submit_Button.dart';
+import 'package:ZoalPay/Widgets/error_widgets.dart';
 import 'package:ZoalPay/lang/Localization.dart';
+import 'package:ZoalPay/models/card_model.dart';
+import 'package:ZoalPay/models/payee_model.dart';
+import 'package:ZoalPay/provider/api_services.dart';
+import 'package:ZoalPay/utils/validators.dart';
+import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:ZoalPay/utils/constants.dart';
 
-class MintPaymentPage extends StatelessWidget {
+class MintPaymentPage extends StatefulWidget {
   static final pageName = "MintPaymentPage";
-  var _controller1 = TextEditingController();
-  var _controller2 = TextEditingController();
-  var _controller3 = TextEditingController();
-  var _controller4 = TextEditingController();
 
+  @override
+  _MintPaymentPageState createState() => _MintPaymentPageState();
+}
+
+class _MintPaymentPageState extends State<MintPaymentPage> {
+  var _cardNameController = TextEditingController();
+
+  var _amountController = TextEditingController();
+
+  var _commentController = TextEditingController();
+
+  var _ipinController = TextEditingController();
+
+  bool _validate = false;
+  CardModel selectedCard;
   build(context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
@@ -34,26 +54,32 @@ class MintPaymentPage extends StatelessWidget {
               SizedBox(
                 width: width - (width / 15),
                 child: TextField(
-                  controller: _controller1,
+                  controller: _cardNameController,
+                  onChanged: (value) {
+                    _cardNameController.text = selectedCard?.cardUserName ?? "";
+                  },
+                  onSubmitted: (string) {},
                   style: TextStyle(
                     fontWeight: FontWeight.w300,
                   ),
                   decoration: InputDecoration(
+                      errorText:
+                          selectedCard == null ? "Please select a card" : null,
                       labelText: Localization.of(context)
                           .getTranslatedValue("Card Number"),
-                      suffixIcon: PopupMenuButton(
-                          itemBuilder: (BuildContext context) => [
-                                PopupMenuItem(
-                                  child: Text("choice 1"),
-                                  value: "choice 1",
-                                ),
-                                PopupMenuItem(
-                                  child: Text("choice 2"),
-                                  value: "choice 2",
-                                )
-                              ],
+                      suffixIcon: PopupMenuButton<CardModel>(
+                          itemBuilder: (BuildContext context) =>
+                              CardModel.allCards
+                                  .map((card) => PopupMenuItem(
+                                        child: Text(card.cardUserName),
+                                        value: card,
+                                      ))
+                                  .toList(),
                           onSelected: (value) {
-                            _controller1.text = value;
+                            selectedCard = value;
+                            _cardNameController.text =
+                                selectedCard.cardUserName;
+                            print("${value.cardNumber}");
                           },
                           icon: Icon(Icons.arrow_drop_down))),
                 ),
@@ -72,13 +98,16 @@ class MintPaymentPage extends StatelessWidget {
               SizedBox(
                 width: width - (width / 15),
                 child: TextField(
-                  controller: _controller2,
+                  controller: _amountController,
                   onChanged: (string) {},
                   onSubmitted: (string) {},
                   style: TextStyle(
                     fontWeight: FontWeight.w300,
                   ),
                   decoration: InputDecoration(
+                    errorText: _validate
+                        ? amountValidError(_amountController.text.trim())
+                        : null,
                     labelText:
                         Localization.of(context).getTranslatedValue("Amount"),
                   ),
@@ -98,7 +127,7 @@ class MintPaymentPage extends StatelessWidget {
               SizedBox(
                 width: width - (width / 15),
                 child: TextField(
-                  controller: _controller3,
+                  controller: _commentController,
                   onChanged: (string) {},
                   onSubmitted: (string) {},
                   style: TextStyle(
@@ -124,13 +153,17 @@ class MintPaymentPage extends StatelessWidget {
               SizedBox(
                 width: width - (width / 15),
                 child: TextField(
-                  controller: _controller4,
+                  controller: _ipinController,
                   onChanged: (string) {},
                   onSubmitted: (string) {},
                   style: TextStyle(
                     fontWeight: FontWeight.w300,
                   ),
+                  obscureText: true,
                   decoration: InputDecoration(
+                    errorText: _validate
+                        ? iPinValidError(_ipinController.text.trim())
+                        : null,
                     labelText:
                         Localization.of(context).getTranslatedValue("IPIN"),
                   ),
@@ -141,7 +174,36 @@ class MintPaymentPage extends StatelessWidget {
           SizedBox(
             height: height / 40,
           ),
-          SubmitButton(() {})
+          SubmitButton(() async {
+            // validate everything
+            setState(() {
+              _validate = true;
+            });
+            if (selectedCard != null &&
+                isAmountValid(_amountController.text.trim()) &&
+                isIpinValid(_ipinController.text.trim())) {
+              try {
+                // attempt transaction
+                showLoadingDialog(context);
+                Map<dynamic, dynamic> returnValue = await context
+                    .read<ApiService>()
+                    .payBill(
+                        selectedCard,
+                        _ipinController.text.trim(),
+                        int.parse(_amountController.text.trim()),
+                        mintPayeeModel,
+                        "number",
+                        _commentController.text.trim(),
+                        paymentType.customPayment);
+                String date = DateFormat.yMd().format(DateTime.now());
+                Navigator.pop(context);
+              } catch (e) {
+                Navigator.pop(context);
+                showErrorWidget(
+                    context, "Somthing went wrong, please try again later");
+              }
+            }
+          })
         ],
       ),
     );
